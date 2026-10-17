@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NomaByte Studio — Mobile App Development</title>
   
-  <!-- Favicon / Иконка логотипа для браузеров и поиска Google -->
+  <!-- Favicon / Иконка логотипа -->
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="apple-touch-icon" href="/logo.png" />
 
@@ -45,17 +45,38 @@
     function App() {
       const [selectedAnswer, setSelectedAnswer] = useState(null);
       const [submitted, setSubmitted] = useState(false);
+      const [loading, setLoading] = useState(false);
       const [showPrivacy, setShowPrivacy] = useState(false);
       const [formData, setFormData] = useState({ name: '', email: '', message: '' });
 
-      const handleFormSubmit = (e) => {
+      const handleFormSubmit = async (e) => {
         e.preventDefault();
-        if (formData.name && formData.email) {
-          setSubmitted(true);
-          setTimeout(() => {
-            setSubmitted(false);
+        setLoading(true);
+        
+        // Твой личный Formspree эндпоинт:
+        const formSpreeUrl = "https://formspree.io/f/mwlvypbn"; 
+
+        try {
+          const response = await fetch(formSpreeUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify(formData)
+          });
+
+          if (response.ok) {
+            setSubmitted(true);
             setFormData({ name: '', email: '', message: '' });
-          }, 4000);
+            setTimeout(() => setSubmitted(false), 5000);
+          } else {
+            alert("Ошибка при отправке. Пожалуйста, напишите нам напрямую в Telegram.");
+          }
+        } catch (error) {
+          alert("Ошибка соединения. Попробуйте еще раз.");
+        } finally {
+          setLoading(false);
         }
       };
 
@@ -135,7 +156,7 @@
               </div>
             </section>
 
-            {/* App Showcase with Animated Android Phone */}
+            {/* App Showcase */}
             <section id="apps" class="py-20 border-t border-slate-800/60">
               <div class="text-center mb-16">
                 <h2 class="font-mono text-xs text-cyan-400 tracking-widest uppercase mb-2">// SHOWCASE</h2>
@@ -147,15 +168,12 @@
                 {/* 3D Animated Android Phone */}
                 <div class="lg:col-span-6 flex justify-center py-6">
                   <div class="relative w-[280px] h-[570px] bg-slate-950 rounded-[45px] p-3 border-4 border-slate-700/80 shadow-[0_25px_60px_-15px_rgba(6,182,212,0.25)] animate-float perspective-1000">
-                    {/* Camera Notch */}
                     <div class="absolute top-5 left-1/2 -translate-x-1/2 w-20 h-4 bg-slate-900 rounded-full z-30 flex items-center justify-center gap-2 border border-slate-800">
                       <div class="w-2.5 h-2.5 bg-black rounded-full border border-slate-700"></div>
                       <div class="w-1.5 h-1.5 bg-blue-950 rounded-full"></div>
                     </div>
 
-                    {/* Phone Screen */}
                     <div class="w-full h-full bg-slate-900 rounded-[35px] overflow-hidden relative border border-slate-800 flex flex-col pt-8">
-                      {/* App Header inside phone */}
                       <div class="bg-blue-600 p-4 text-white">
                         <div class="flex items-center justify-between mb-1">
                           <span class="text-[10px] font-mono tracking-wider opacity-80">VODIČÁK SK</span>
@@ -164,7 +182,6 @@
                         <h4 class="font-bold text-sm">Тест ПДД Словакии</h4>
                       </div>
 
-                      {/* Interactive App Screen */}
                       <div class="p-4 flex-1 flex flex-col justify-between bg-slate-950 text-xs">
                         <div>
                           <div class="text-[10px] font-mono text-cyan-400 mb-2">Вопрос 1 / 20:</div>
@@ -207,7 +224,6 @@
                         </div>
                       </div>
 
-                      {/* Android Bottom Navigation Line */}
                       <div class="h-4 bg-slate-950 flex justify-center items-center pb-1">
                         <div class="w-24 h-1 bg-slate-700 rounded-full"></div>
                       </div>
@@ -217,7 +233,6 @@
 
                 {/* Projects Descriptions */}
                 <div class="lg:col-span-6 space-y-8">
-                  {/* Active Published App */}
                   <div class="p-6 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-slate-700 transition-all">
                     <div class="flex items-center gap-3 mb-4">
                       <div class="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold font-mono">
@@ -247,7 +262,6 @@
                     </button>
                   </div>
 
-                  {/* Secret Project In-Development */}
                   <div class="p-6 rounded-2xl bg-slate-900/30 border border-dashed border-slate-800/80">
                     <div class="flex items-center gap-3 mb-4">
                       <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 font-mono font-bold">
@@ -268,7 +282,6 @@
                       <span class="px-3 py-1 rounded-md bg-slate-900 text-slate-500 font-mono text-xs">AI Integration</span>
                     </div>
                   </div>
-
                 </div>
 
               </div>
@@ -286,7 +299,6 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
-                  {/* Telegram */}
                   <a
                     href="https://t.me/nomabytestudio"
                     target="_blank"
@@ -305,7 +317,6 @@
                     <span class="text-cyan-400 font-mono text-lg group-hover:translate-x-1 transition-transform">&rarr;</span>
                   </a>
 
-                  {/* Instagram */}
                   <div class="p-5 rounded-2xl bg-slate-900/30 border border-slate-800/60 flex items-center justify-between opacity-60">
                     <div class="flex items-center gap-4">
                       <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 font-bold font-mono">
@@ -319,15 +330,16 @@
                   </div>
                 </div>
 
-                {/* Email Form */}
+                {/* Form sending via Formspree */}
                 <form onSubmit={handleFormSubmit} class="p-8 rounded-3xl bg-slate-900/40 border border-slate-800 space-y-5">
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
                       <label class="block font-mono text-xs text-slate-400 mb-2">ВАШЕ ИМЯ</label>
                       <input
                         type="text"
+                        name="name"
                         required
-                        placeholder="Alexandr"
+                        placeholder="Саша"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 focus:outline-none focus:border-cyan-500 transition-colors text-sm"
@@ -337,8 +349,9 @@
                       <label class="block font-mono text-xs text-slate-400 mb-2">EMAIL</label>
                       <input
                         type="email"
+                        name="email"
                         required
-                        placeholder="name@domain.com"
+                        placeholder="josan.alexandr@icloud.com"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 focus:outline-none focus:border-cyan-500 transition-colors text-sm"
@@ -350,8 +363,9 @@
                     <label class="block font-mono text-xs text-slate-400 mb-2">СООБЩЕНИЕ</label>
                     <textarea
                       rows="4"
+                      name="message"
                       required
-                      placeholder="Расскажите о вашей идее..."
+                      placeholder="Помогите..."
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 focus:outline-none focus:border-cyan-500 transition-colors text-sm resize-none"
@@ -360,14 +374,15 @@
 
                   <button
                     type="submit"
-                    class="w-full py-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition-all shadow-lg shadow-cyan-500/20 font-mono"
+                    disabled={loading}
+                    class="w-full py-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition-all shadow-lg shadow-cyan-500/20 font-mono disabled:opacity-50"
                   >
-                    SEND_MESSAGE &rarr;
+                    {loading ? 'SENDING...' : 'SEND_MESSAGE →'}
                   </button>
 
                   {submitted && (
                     <div class="p-4 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-emerald-300 text-xs font-mono text-center">
-                      ✓ Сообщение успешно отправлено! Мы свяжемся с вами в ближайшее время.
+                      ✓ Сообщение успешно отправлено! Оно доставлено на почту разработчикам.
                     </div>
                   )}
                 </form>
