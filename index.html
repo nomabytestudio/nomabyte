@@ -6,8 +6,8 @@
   <title>NomaByte Studio — Mobile App Development</title>
   
   <!-- Favicon / Иконка логотипа -->
-  <link rel="icon" type="image/png" href="/logo.png" />
-  <link rel="apple-touch-icon" href="/logo.png" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -47,22 +47,23 @@
       const [submitted, setSubmitted] = useState(false);
       const [loading, setLoading] = useState(false);
       const [showPrivacy, setShowPrivacy] = useState(false);
-      const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+      const [showBetaModal, setShowBetaModal] = useState(false);
+      const [betaSubmitted, setBetaSubmitted] = useState(false);
+      const [betaLoading, setBetaLoading] = useState(false);
 
+      const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+      const [betaData, setBetaData] = useState({ name: '', email: '', device: '', experience: '', rulesAgreed: false });
+
+      // Отправка обычного сообщения
       const handleFormSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        
-        // Твой личный Formspree эндпоинт:
         const formSpreeUrl = "https://formspree.io/f/mwlvypbn"; 
 
         try {
           const response = await fetch(formSpreeUrl, {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
             body: JSON.stringify(formData)
           });
 
@@ -71,18 +72,60 @@
             setFormData({ name: '', email: '', message: '' });
             setTimeout(() => setSubmitted(false), 5000);
           } else {
-            alert("Ошибка при отправке. Пожалуйста, напишите нам напрямую в Telegram.");
+            alert("Ошибка при отправке. Напишите нам в Telegram.");
           }
         } catch (error) {
-          alert("Ошибка соединения. Попробуйте еще раз.");
+          alert("Ошибка соединения.");
         } finally {
           setLoading(false);
         }
       };
 
+      // Отправка заявки бета-тестера
+      const handleBetaSubmit = async (e) => {
+        e.preventDefault();
+        if (!betaData.rulesAgreed) {
+          alert("Пожалуйста, подтвердите согласие с правилами бета-тестирования.");
+          return;
+        }
+
+        setBetaLoading(true);
+        const formSpreeUrl = "https://formspree.io/f/mwlvypbn"; 
+
+        try {
+          const response = await fetch(formSpreeUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({
+              subject: "🚀 Новая заявка в бета-тестеры!",
+              name: betaData.name,
+              email: betaData.email,
+              device: betaData.device,
+              experience: betaData.experience,
+              rulesAgreed: "Согласен с правилами (Бесплатный тест)"
+            })
+          });
+
+          if (response.ok) {
+            setBetaSubmitted(true);
+            setTimeout(() => {
+              setBetaSubmitted(false);
+              setShowBetaModal(false);
+              setBetaData({ name: '', email: '', device: '', experience: '', rulesAgreed: false });
+            }, 4000);
+          } else {
+            alert("Ошибка при отправке заявки.");
+          }
+        } catch (error) {
+          alert("Ошибка соединения.");
+        } finally {
+          setBetaLoading(false);
+        }
+      };
+
       return (
         <div class="min-h-screen relative overflow-hidden bg-[#08090c]">
-          {/* Background Technical Grid & Ambient Glows */}
+          {/* Background Grid & Glows */}
           <div class="fixed inset-0 pointer-events-none z-0">
             <div class="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px] opacity-25"></div>
             <div class="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-cyan-500/10 blur-[140px] rounded-full animate-glow"></div>
@@ -101,13 +144,17 @@
               <nav class="hidden md:flex items-center gap-8 text-xs font-mono text-slate-400">
                 <a href="#about" class="hover:text-cyan-400 transition-colors">#about</a>
                 <a href="#apps" class="hover:text-cyan-400 transition-colors">#apps</a>
+                <button onClick={() => setShowBetaModal(true)} class="text-cyan-400 hover:underline font-bold">#стать_бета_тестером</button>
                 <a href="#contact" class="hover:text-cyan-400 transition-colors">#contact</a>
-                <button onClick={() => setShowPrivacy(true)} class="hover:text-cyan-400 transition-colors">#privacy_policy</button>
+                <button onClick={() => setShowPrivacy(true)} class="hover:text-cyan-400 transition-colors">#privacy</button>
               </nav>
 
-              <a href="#contact" class="px-4 py-1.5 rounded-lg border border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-mono text-xs transition-all shadow-[0_0_15px_rgba(6,182,212,0.15)]">
-                hire_us
-              </a>
+              <button 
+                onClick={() => setShowBetaModal(true)}
+                class="px-4 py-1.5 rounded-lg border border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-mono text-xs transition-all shadow-[0_0_15px_rgba(6,182,212,0.15)]"
+              >
+                beta_tester
+              </button>
             </div>
           </header>
 
@@ -138,21 +185,16 @@
                 Мы — независимая студия разработки мобильных приложений. Создаем продуманный софт, сочетающий высокую производительность, современный стек и реальную пользу для людей.
               </p>
 
-              <div class="flex items-center gap-4">
-                <a href="#apps" class="px-6 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition-all shadow-lg shadow-cyan-500/25 flex items-center gap-2">
+              <div class="flex items-center gap-4 flex-wrap justify-center">
+                <button 
+                  onClick={() => setShowBetaModal(true)}
+                  class="px-6 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition-all shadow-lg shadow-cyan-500/25 flex items-center gap-2"
+                >
+                  🚀 Стать бета-тестером
+                </button>
+                <a href="#apps" class="px-6 py-3 rounded-xl border border-slate-800 hover:border-slate-700 bg-slate-900/60 text-slate-300 font-semibold text-sm transition-all">
                   Смотреть приложения
-                  <span class="font-mono">&rarr;</span>
                 </a>
-                <a href="#contact" class="px-6 py-3 rounded-xl border border-slate-800 hover:border-slate-700 bg-slate-900/60 text-slate-300 font-semibold text-sm transition-all">
-                  Связаться
-                </a>
-              </div>
-
-              <div class="mt-20 flex flex-col items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
-                <span class="font-mono text-[10px] tracking-widest text-slate-500 uppercase">Scroll to explore</span>
-                <div class="w-5 h-8 rounded-full border-2 border-slate-700 flex justify-center pt-1.5">
-                  <div class="w-1 h-2 bg-cyan-400 rounded-full animate-bounce"></div>
-                </div>
               </div>
             </section>
 
@@ -165,7 +207,7 @@
 
               <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                 
-                {/* 3D Animated Android Phone */}
+                {/* 3D Phone Mockup */}
                 <div class="lg:col-span-6 flex justify-center py-6">
                   <div class="relative w-[280px] h-[570px] bg-slate-950 rounded-[45px] p-3 border-4 border-slate-700/80 shadow-[0_25px_60px_-15px_rgba(6,182,212,0.25)] animate-float perspective-1000">
                     <div class="absolute top-5 left-1/2 -translate-x-1/2 w-20 h-4 bg-slate-900 rounded-full z-30 flex items-center justify-center gap-2 border border-slate-800">
@@ -188,7 +230,6 @@
                           <p class="font-medium text-slate-200 mb-4 leading-relaxed">
                             Aké je maximálne povolené rýchlostné obmedzenie v obci?
                           </p>
-
                           <div class="space-y-2">
                             {[
                               { id: 'a', text: '50 km/h', correct: true },
@@ -200,9 +241,7 @@
                                 onClick={() => setSelectedAnswer(opt.id)}
                                 class={`w-full text-left p-2.5 rounded-lg border transition-all ${
                                   selectedAnswer === opt.id
-                                    ? opt.correct
-                                      ? 'bg-emerald-950/60 border-emerald-500 text-emerald-300'
-                                      : 'bg-rose-950/60 border-rose-500 text-rose-300'
+                                    ? opt.correct ? 'bg-emerald-950/60 border-emerald-500 text-emerald-300' : 'bg-rose-950/60 border-rose-500 text-rose-300'
                                     : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'
                                 }`}
                               >
@@ -212,18 +251,12 @@
                             ))}
                           </div>
                         </div>
-
                         {selectedAnswer && (
                           <div class="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] text-center font-mono">
                             ✓ Správne! (50 km/h v obci)
                           </div>
                         )}
-
-                        <div class="text-center pt-2">
-                          <span class="text-[9px] font-mono text-slate-600 uppercase">Live Demo • Tap options above</span>
-                        </div>
                       </div>
-
                       <div class="h-4 bg-slate-950 flex justify-center items-center pb-1">
                         <div class="w-24 h-1 bg-slate-700 rounded-full"></div>
                       </div>
@@ -231,13 +264,11 @@
                   </div>
                 </div>
 
-                {/* Projects Descriptions */}
+                {/* Descriptions & Beta CTA */}
                 <div class="lg:col-span-6 space-y-8">
                   <div class="p-6 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-slate-700 transition-all">
                     <div class="flex items-center gap-3 mb-4">
-                      <div class="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold font-mono">
-                        SK
-                      </div>
+                      <div class="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold font-mono">SK</div>
                       <div>
                         <h4 class="text-xl font-bold text-white">Vodičák SK</h4>
                         <span class="text-xs font-mono text-emerald-400 flex items-center gap-1">
@@ -246,41 +277,24 @@
                       </div>
                     </div>
                     <p class="text-slate-400 text-sm leading-relaxed mb-6">
-                      Приложение для эффективной подготовки к теоретическому экзамену по вождению в Словакии. Интерактивные тесты, карточки вопросов, учет статистики ответов.
+                      Приложение для подготовки к теоретическому экзамену по вождению в Словакии. Интерактивные тесты и статистика.
                     </p>
-                    <div class="flex items-center gap-3 mb-4">
-                      <span class="px-3 py-1 rounded-md bg-slate-800 text-slate-300 font-mono text-xs">Flutter</span>
-                      <span class="px-3 py-1 rounded-md bg-slate-800 text-slate-300 font-mono text-xs">Dart</span>
-                      <span class="px-3 py-1 rounded-md bg-slate-800 text-slate-300 font-mono text-xs">Firebase</span>
-                    </div>
-
-                    <button
-                      onClick={() => setShowPrivacy(true)}
-                      class="text-xs font-mono text-cyan-400 hover:underline flex items-center gap-1"
-                    >
-                      📄 Zásady ochrany osobných údajov (Privacy Policy) &rarr;
+                    <button onClick={() => setShowPrivacy(true)} class="text-xs font-mono text-cyan-400 hover:underline flex items-center gap-1">
+                      📄 Zásady ochrany osobných údajov &rarr;
                     </button>
                   </div>
 
-                  <div class="p-6 rounded-2xl bg-slate-900/30 border border-dashed border-slate-800/80">
-                    <div class="flex items-center gap-3 mb-4">
-                      <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 font-mono font-bold">
-                        ?
-                      </div>
-                      <div>
-                        <h4 class="text-xl font-bold text-white">Project X</h4>
-                        <span class="text-xs font-mono text-cyan-400 flex items-center gap-1">
-                          <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span> В активной разработке / Secret
-                        </span>
-                      </div>
+                  <div class="p-6 rounded-2xl bg-cyan-950/20 border border-cyan-500/30 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div>
+                      <h4 class="text-lg font-bold text-white mb-1">Хотите тестировать новые фичи первыми?</h4>
+                      <p class="text-xs text-slate-400">Присоединяйтесь к закрытой программе бета-тестирования NomaByte.</p>
                     </div>
-                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
-                      Новый конфиденциальный продукт студии NomaByte. Раскроем подробности и функционал сразу после завершения стадии бета-тестирования.
-                    </p>
-                    <div class="flex items-center gap-3">
-                      <span class="px-3 py-1 rounded-md bg-slate-900 text-slate-500 font-mono text-xs">Flutter</span>
-                      <span class="px-3 py-1 rounded-md bg-slate-900 text-slate-500 font-mono text-xs">AI Integration</span>
-                    </div>
+                    <button 
+                      onClick={() => setShowBetaModal(true)}
+                      class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs font-mono whitespace-nowrap transition-all shadow-md"
+                    >
+                      Подать заявку
+                    </button>
                   </div>
                 </div>
 
@@ -293,44 +307,8 @@
                 <div class="text-center mb-12">
                   <h2 class="font-mono text-xs text-cyan-400 tracking-widest uppercase mb-2">// GET IN TOUCH</h2>
                   <h3 class="text-3xl md:text-5xl font-extrabold text-white mb-4">Написать нам</h3>
-                  <p class="text-slate-400 text-sm">
-                    Выберите удобный способ связи или отправьте нам прямое сообщение:
-                  </p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
-                  <a
-                    href="https://t.me/nomabytestudio"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-cyan-500/50 hover:bg-slate-900 transition-all flex items-center justify-between group"
-                  >
-                    <div class="flex items-center gap-4">
-                      <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 font-bold font-mono group-hover:scale-110 transition-transform">
-                        TG
-                      </div>
-                      <div>
-                        <div class="font-bold text-white">Telegram</div>
-                        <div class="text-xs font-mono text-slate-400">@nomabytestudio</div>
-                      </div>
-                    </div>
-                    <span class="text-cyan-400 font-mono text-lg group-hover:translate-x-1 transition-transform">&rarr;</span>
-                  </a>
-
-                  <div class="p-5 rounded-2xl bg-slate-900/30 border border-slate-800/60 flex items-center justify-between opacity-60">
-                    <div class="flex items-center gap-4">
-                      <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 font-bold font-mono">
-                        IG
-                      </div>
-                      <div>
-                        <div class="font-bold text-white">Instagram</div>
-                        <div class="text-xs font-mono text-purple-400">https://www.instagram.com/nomabyte?rpxt=ZGJ3cjBsdnVkbmlu</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Form sending via Formspree */}
                 <form onSubmit={handleFormSubmit} class="p-8 rounded-3xl bg-slate-900/40 border border-slate-800 space-y-5">
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
@@ -339,10 +317,10 @@
                         type="text"
                         name="name"
                         required
-                        placeholder="Name"
+                        placeholder="Саша"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 focus:outline-none focus:border-cyan-500 transition-colors text-sm"
+                        class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 focus:outline-none focus:border-cyan-500 text-sm"
                       />
                     </div>
                     <div>
@@ -351,38 +329,35 @@
                         type="email"
                         name="email"
                         required
-                        placeholder="example@example.com"
+                        placeholder="name@domain.com"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 focus:outline-none focus:border-cyan-500 transition-colors text-sm"
+                        class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 focus:outline-none focus:border-cyan-500 text-sm"
                       />
                     </div>
                   </div>
-
                   <div>
                     <label class="block font-mono text-xs text-slate-400 mb-2">СООБЩЕНИЕ</label>
                     <textarea
                       rows="4"
                       name="message"
                       required
-                      placeholder="Помогите..."
+                      placeholder="Ваше сообщение..."
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 focus:outline-none focus:border-cyan-500 transition-colors text-sm resize-none"
+                      class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 focus:outline-none focus:border-cyan-500 text-sm resize-none"
                     ></textarea>
                   </div>
-
                   <button
                     type="submit"
                     disabled={loading}
-                    class="w-full py-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition-all shadow-lg shadow-cyan-500/20 font-mono disabled:opacity-50"
+                    class="w-full py-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition-all font-mono disabled:opacity-50"
                   >
                     {loading ? 'SENDING...' : 'SEND_MESSAGE →'}
                   </button>
-
                   {submitted && (
                     <div class="p-4 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-emerald-300 text-xs font-mono text-center">
-                      ✓ Сообщение успешно отправлено! Оно доставлено на почту разработчикам.
+                      ✓ Сообщение успешно отправлено на почту разработчикам!
                     </div>
                   )}
                 </form>
@@ -390,6 +365,111 @@
             </section>
 
           </main>
+
+          {/* Модальное окно: Стать бета-тестером */}
+          {showBetaModal && (
+            <div class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+              <div class="bg-slate-900 border border-slate-800 max-w-xl w-full rounded-3xl p-6 md:p-8 relative shadow-2xl my-8">
+                <button
+                  onClick={() => setShowBetaModal(false)}
+                  class="absolute top-6 right-6 w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center font-mono font-bold"
+                >
+                  ✕
+                </button>
+
+                <h2 class="text-2xl font-bold text-white mb-2">🚀 Заявка на бета-тестирование</h2>
+                <p class="text-xs text-slate-400 mb-6 font-mono">Заполните анкету, чтобы получить ранний доступ к нашим новым приложениям.</p>
+
+                <form onSubmit={handleBetaSubmit} class="space-y-4">
+                  <div>
+                    <label class="block font-mono text-xs text-slate-400 mb-1">ВАШЕ ИМЯ</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Александр"
+                      value={betaData.name}
+                      onChange={(e) => setBetaData({ ...betaData, name: e.target.value })}
+                      class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-sm focus:outline-none focus:border-cyan-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label class="block font-mono text-xs text-slate-400 mb-1">EMAIL (Google Play / Apple ID)</label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="name@gmail.com"
+                      value={betaData.email}
+                      onChange={(e) => setBetaData({ ...betaData, email: e.target.value })}
+                      class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-sm focus:outline-none focus:border-cyan-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label class="block font-mono text-xs text-slate-400 mb-1">ВАШ УСТРОЙСТВО</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="например, Samsung Galaxy S23 / iPhone 14"
+                      value={betaData.device}
+                      onChange={(e) => setBetaData({ ...betaData, device: e.target.value })}
+                      class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-sm focus:outline-none focus:border-cyan-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label class="block font-mono text-xs text-slate-400 mb-1">ПОЧЕМУ ИНТЕРЕСЕН ТЕСТ?</label>
+                    <textarea
+                      rows="2"
+                      placeholder="Кратко о себе или вашем опыте..."
+                      value={betaData.experience}
+                      onChange={(e) => setBetaData({ ...betaData, experience: e.target.value })}
+                      class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-sm focus:outline-none focus:border-cyan-500 resize-none"
+                    ></textarea>
+                  </div>
+
+                  {/* Правила бета-теста */}
+                  <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-400 space-y-2">
+                    <div class="font-bold text-slate-200 uppercase font-mono text-[11px]">// Правила бета-тестирования:</div>
+                    <ul class="list-disc pl-4 space-y-1">
+                      <li>Участие в программе бета-тестирования является добровольным и <strong>не оплачивается</strong> разработчиком.</li>
+                      <li>Тестировщик получает ранний доступ к программному обеспечению «как есть» (as is).</li>
+                      <li>Все найденные баги и отзывы обязуетесь отправлять разработчикам.</li>
+                    </ul>
+                  </div>
+
+                  {/* Чекбокс согласия */}
+                  <div class="flex items-start gap-3 pt-2">
+                    <input
+                      type="checkbox"
+                      id="rules"
+                      required
+                      checked={betaData.rulesAgreed}
+                      onChange={(e) => setBetaData({ ...betaData, rulesAgreed: e.target.checked })}
+                      class="mt-0.5 w-4 h-4 rounded bg-slate-950 border-slate-800 text-cyan-500 focus:ring-0 cursor-pointer"
+                    />
+                    <label for="rules" class="text-xs text-slate-300 cursor-pointer select-none">
+                      Я прочитал и полностью согласен с правилами бета-тестирования (понимаю, что тест бесплатный и без денежного вознаграждения).
+                    </label>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={betaLoading}
+                    class="w-full py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition-all font-mono shadow-lg disabled:opacity-50"
+                  >
+                    {betaLoading ? 'ОТПРАВКА...' : 'ОТПРАВИТЬ ЗАЯВКУ →'}
+                  </button>
+
+                  {betaSubmitted && (
+                    <div class="p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-emerald-300 text-xs font-mono text-center">
+                      ✓ Анкета успешно отправлена разработчикам! Ждите приглашение.
+                    </div>
+                  )}
+                </form>
+              </div>
+            </div>
+          )}
 
           {/* Privacy Policy Modal */}
           {showPrivacy && (
@@ -401,106 +481,15 @@
                 >
                   ✕
                 </button>
-
                 <h2 class="text-2xl font-bold text-white mb-2">Zásady ochrany osobných údajov</h2>
-                <div class="text-xs font-mono text-cyan-400 mb-6 space-y-1">
-                  <div>Aplikácia: Vodičák SK</div>
-                  <div>Vývojár: NomaByte</div>
-                  <div>Dátum účinnosti: 16. október 2026</div>
+                <div class="text-xs font-mono text-cyan-400 mb-6">Aplikácia: Vodičák SK | Vývojár: NomaByte</div>
+                <div class="text-slate-300 text-sm space-y-4 leading-relaxed">
+                  <p>Aplikácia Vodičák SK rešpektuje vaše súkromie. Používame anonymnú autentifikáciu cez Firebase a ukladáme iba dáta o pokroku v testoch.</p>
+                  <p>Služby tretích strán ako Google AdMob a Firebase Analytics môžu zhromažδιť anonymné štatistiky a ID zariadenia.</p>
+                  <p>Kontakt: <a href="mailto:nomabyte@gmail.com" class="text-cyan-400">nomabyte@gmail.com</a></p>
                 </div>
-
-                <div class="text-slate-300 text-sm space-y-6 leading-relaxed">
-                  <p>
-                    Aplikácia Vodičák SK (ďalej len „aplikácia“) rešpektuje vaše súkromie. Tieto Zásady ochrany osobných údajov vysvetľujú, aké údaje zhromažďujeme, ako ich používame a aké máte práva v súvislosti s vašimi osobnými údajmi.
-                  </p>
-
-                  <div>
-                    <h3 class="font-bold text-white mb-2">1. Aké údaje zhromažďujeme</h3>
-                    <p class="mb-3">Aplikácia využívá služby tretích strán na zabezpečenie správneho fungovania, analýzy a zobrazovania reklám.</p>
-                    
-                    <div class="space-y-3 pl-3 border-l-2 border-cyan-500/40">
-                      <div>
-                        <strong class="text-slate-100">a) Anonymná identifikácia a používateľský účet</strong>
-                        <ul class="list-disc pl-5 mt-1 space-y-1 text-slate-400 text-xs">
-                          <li><strong>Firebase Authentication:</strong> Používame anonymnú autentifikáciu. Vytvára sa unikátne ID používateľa (UID), ktoré neobsahuje vaše meno, e-mail ani telefónne číslo.</li>
-                          <li><strong>Firestore Database:</strong> Zhromažďujeme anonymné dáta týkajúce sa vášho pokroku v testoch (napr. úspešnosť, vyriešené otázky) a stav predplatného (isPremium).</li>
-                        </ul>
-                      </div>
-
-                      <div>
-                        <strong class="text-slate-100">b) Automaticky zhromažďované údaje (Služby tretích strán)</strong>
-                        <p class="text-xs text-slate-400 mt-1">Služby tretích strán môžu zhromažďovať informácie používané na vašu identifikáciu:</p>
-                        <ul class="list-disc pl-5 mt-1 space-y-1 text-slate-400 text-xs">
-                          <li>Google Play Services</li>
-                          <li><strong>Google AdMob (na zobrazovanie reklám):</strong> Môže zhromažďovať reklamný identifikátor zariadenia (Advertising ID), IP adresu a dáta o interakcii s reklamami.</li>
-                          <li><strong>Firebase Analytics / Crashlytics:</strong> Zhromažďuje anonymné údaje o používaní aplikácie a hlásenia o chybách (pádoch aplikácie).</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 class="font-bold text-white mb-2">2. Ako používame zhromaždené údaje</h3>
-                    <ul class="list-disc pl-5 space-y-1 text-slate-300 text-xs">
-                      <li>Zabezpečenie funkčnosti aplikácie a ukladanie vášho pokroku v testoch.</li>
-                      <li>Správu a overenie prémiového prístupu (nákupy v aplikácii cez Google Play Billing).</li>
-                      <li>Zobrazovanie relevantných reklám (pre neplatenej verzii).</li>
-                      <li>Zlepšovanie stability a výkonu aplikácie na základe anonymných hlásení o chybách.</li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h3 class="font-bold text-white mb-2">3. Zdieľanie údajov s tretími stranami</h3>
-                    <p>
-                      Vaše osobné údaje nepredávame ani neprenášame tretím stranám na marketingové účely. Dáta sú spracovávané iba prostredníctvom overených služieb spoločnosti Google (Google Privacy Policy, Google AdMob Privacy).
-                    </p>
-                  </div>
-
-                  <div>
-                    <h3 class="font-bold text-white mb-2">4. Nákupy v aplikácii (Google Play Billing)</h3>
-                    <p>
-                      Všetky finančné transakcie a spracovanie platieb prebiehajú bezpečne cez systém Google Play Commerce. Aplikácia Vodičák SK ani vývojár NomaByte nemajú prístup k vašim platobným kartám ani bankovým údajom. Ukladáme iba informáciu o tom, či je prémiový účet aktívny.
-                    </p>
-                  </div>
-
-                  <div>
-                    <h3 class="font-bold text-white mb-2">5. Práva používateľa a vymazanie údajov</h3>
-                    <p>
-                      Máte právo kedykoľvek požiadať o vymazanie vašich anonymných dát uložených v databáze Firebase. Nakoľko nepoužívame registráciu e-mailom, stačí nás kontaktovať na nižšie uvedenej e-mailovej adrese a uviesť vaše identifikátor zariadenia alebo UID.
-                    </p>
-                  </div>
-
-                  <div>
-                    <h3 class="font-bold text-white mb-2">6. Súkromie detí</h3>
-                    <p>
-                      Aplikácia nie je primárne určená pre deti mladšie ako 13 rokov. Vedome nezhromažďujeme osobné identifikačné údaje od detí.
-                    </p>
-                  </div>
-
-                  <div>
-                    <h3 class="font-bold text-white mb-2">7. Zmeny týchto zásad</h3>
-                    <p>
-                      Tieto Zásady ochrany osobných údajov môžeme občas aktualizovať. Odporúčame túto stránku pravidelne kontrolovať. Zmeny nadobládajú účinnosť ihneď po ich zverejnení.
-                    </p>
-                  </div>
-
-                  <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
-                    <h3 class="font-bold text-white mb-2">8. Kontaktujte nás</h3>
-                    <div class="text-xs font-mono space-y-1 text-slate-300">
-                      <div>E-mail: <a href="mailto:nomabyte@gmail.com" class="text-cyan-400">nomabyte@gmail.com</a></div>
-                      <div>Telegram: <a href="https://t.me/nomabytestudio" target="_blank" class="text-cyan-400">https://t.me/nomabytestudio</a></div>
-                      <div class="pt-2 text-slate-500">Vývojár: NomaByte / NomaByte Studio</div>
-                    </div>
-                  </div>
-                </div>
-
                 <div class="mt-8 text-center">
-                  <button
-                    onClick={() => setShowPrivacy(false)}
-                    class="px-6 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs font-mono transition-all"
-                  >
-                    CLOSE_WINDOW
-                  </button>
+                  <button onClick={() => setShowPrivacy(false)} class="px-6 py-2 rounded-xl bg-cyan-500 text-slate-950 font-bold text-xs font-mono">Zavrieť</button>
                 </div>
               </div>
             </div>
@@ -514,8 +503,6 @@
                 <button onClick={() => setShowPrivacy(true)} class="hover:text-cyan-400 transition-colors">Privacy Policy</button>
                 <span>•</span>
                 <a href="https://t.me/nomabytestudio" target="_blank" class="hover:text-cyan-400 transition-colors">Telegram</a>
-                <span>•</span>
-                <span>Bratislava, SK</span>
               </div>
             </div>
           </footer>
