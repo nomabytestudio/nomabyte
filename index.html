@@ -1,215 +1,531 @@
 <!DOCTYPE html>
-<html lang="sk">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NomaByte Studio — Mobile App Development</title>
   
-  <!-- Favicon / Иконка логотипа -->
+  <!-- Favicon -->
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="apple-touch-icon" href="/favicon.png" />
 
-  <!-- Tailwind CSS -->
+  <!-- Fonts & Tailwind CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   
   <!-- React & ReactDOM -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-  
-  <!-- Babel Compiler -->
+
+  <!-- Babel -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <style>
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) rotateX(8deg) rotateY(-5deg); }
-      50% { transform: translateY(-12px) rotateX(12deg) rotateY(-2deg); }
+    body { font-family: 'Montserrat', sans-serif; background-color: #050608; color: #f1f5f9; }
+    .font-mono-code { font-family: 'JetBrains Mono', monospace; }
+
+    /* Rain Canvas */
+    #rainCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.6;
     }
-    .animate-float {
-      animation: float 6s ease-in-out infinite;
+
+    /* Intro Screen */
+    #introScreen {
+      position: fixed;
+      inset: 0;
+      background: #000000;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
     }
-    @keyframes pulseGlow {
-      0%, 100% { opacity: 0.3; transform: scale(1); }
-      50% { opacity: 0.6; transform: scale(1.1); }
+    #introScreen.fade-out {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
     }
-    .animate-glow {
-      animation: pulseGlow 4s ease-in-out infinite;
+
+    /* Intro SVG Styles */
+    .l { stroke: url(#g); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; fill: none; stroke-dasharray: 1; stroke-dashoffset: 1; }
+    .halo { fill: #27c7ff; opacity: 0; filter: blur(14px); transform-box: fill-box; transform-origin: center; transform: scale(0); }
+    .n { transform-box: fill-box; transform-origin: center; transform: scale(0); }
+    .ring { fill: none; stroke: #52dcff; stroke-width: 2.5; opacity: 0; transform-box: fill-box; transform-origin: center; }
+    .core { fill: #b8f3ff; opacity: 0; filter: blur(8px); }
+    .pulse { fill: #d6f8ff; filter: drop-shadow(0 0 7px #2fd0ff) drop-shadow(0 0 3px #fff); }
+    .w, .s { opacity: 0; }
+    .w { font-weight: 700; font-size: 92px; }
+    .s { font-weight: 600; font-size: 34px; }
+    
+    .go .l { animation: draw 1s cubic-bezier(.6,0,.2,1) forwards; animation-delay: calc(.4s + var(--i)*.12s); }
+    .go .halo { animation: halo 3s ease-in-out forwards; animation-delay: calc(var(--i)*.14s); }
+    .go .n { animation: pop .6s cubic-bezier(.3,1.6,.5,1) forwards; animation-delay: calc(var(--i)*.14s); }
+    .go .ring { animation: ring 1.2s ease-out forwards; animation-delay: calc(var(--i)*.14s + .1s); }
+    .go .core { animation: core 1.5s ease-out 1.5s forwards; }
+    .go .cring { animation: ring 2s ease-out 1.6s forwards; }
+    .go .w { animation: fade 0.8s ease-out 1.8s forwards; }
+    .go .s { animation: fade 0.8s ease-out 2.2s forwards; }
+
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+    @keyframes pop { to { transform: scale(1); } }
+    @keyframes halo { 0% { transform: scale(0); opacity: 0; } 50% { transform: scale(1.6); opacity: .8; } 100% { transform: scale(1.2); opacity: .5; } }
+    @keyframes ring { 0% { transform: scale(.8); opacity: .9; } 100% { transform: scale(4); opacity: 0; } }
+    @keyframes core { 0% { opacity: 0; } 100% { opacity: .6; } }
+    @keyframes fade { to { opacity: 1; } }
+
+    @keyframes floatPhone {
+      0%, 100% { transform: translateY(0px) rotateX(6deg) rotateY(-4deg); }
+      50% { transform: translateY(-14px) rotateX(10deg) rotateY(-1deg); }
     }
+    .animate-phone { animation: floatPhone 6s ease-in-out infinite; }
   </style>
 </head>
-<body class="bg-[#08090c] text-slate-100 font-sans selection:bg-cyan-500/30 selection:text-cyan-300">
-  <div id="root"></div>
+<body class="selection:bg-cyan-500/30 selection:text-cyan-300">
 
+  <!-- Intro Screen (3D Animated Logo) -->
+  <div id="introScreen" class="go">
+    <svg id="logoSvg" viewBox="440 90 530 560" style="width: min(90vw, 480px); height: auto; overflow: visible;">
+      <defs>
+        <linearGradient id="g" gradientUnits="userSpaceOnUse" x1="577" y1="431" x2="831" y2="154">
+          <stop offset="0" stop-color="#2556a6"/><stop offset="1" stop-color="#46c4ee"/>
+        </linearGradient>
+        <radialGradient id="nb"><stop offset="0" stop-color="#7cecff"/><stop offset="1" stop-color="#1fa6d6"/></radialGradient>
+        <radialGradient id="nt"><stop offset="0" stop-color="#e6fdff"/><stop offset="1" stop-color="#5fd8f5"/></radialGradient>
+        <linearGradient id="tg" gradientUnits="userSpaceOnUse" x1="300" y1="0" x2="460" y2="0">
+          <stop offset="0" stop-color="#2d5aa0"/><stop offset=".5" stop-color="#7fd6ff"/><stop offset="1" stop-color="#2d5aa0"/>
+        </linearGradient>
+      </defs>
+      <g id="net">
+        <path class="l" style="--i:0" d="M577 159 L577 431"/>
+        <path class="l" style="--i:1" d="M831 154 L832 430"/>
+        <path class="l" style="--i:2" d="M577 159 L832 430"/>
+        <path class="l" style="--i:3" d="M831 154 L577 431"/>
+        <path class="l" style="--i:4" d="M577 159 L667 333 L832 430"/>
+        <path class="l" style="--i:5" d="M577 431 L640 283"/>
+        <path class="l" style="--i:6" d="M577 159 Q700 222 740 252 L832 430"/>
+        <path class="l" style="--i:7" d="M831 154 L771 303"/>
+        <circle class="core" cx="740" cy="252" r="17"/>
+        <circle class="ring cring" cx="740" cy="252" r="9"/>
+        <circle class="halo" style="--i:0" cx="577" cy="159" r="26"/>
+        <circle class="halo" style="--i:1" cx="831" cy="154" r="26"/>
+        <circle class="halo" style="--i:2" cx="577" cy="431" r="26"/>
+        <circle class="halo" style="--i:3" cx="832" cy="430" r="26"/>
+        <circle class="ring" style="--i:0" cx="577" cy="159" r="23"/>
+        <circle class="ring" style="--i:1" cx="831" cy="154" r="23"/>
+        <circle class="ring" style="--i:2" cx="577" cy="431" r="23"/>
+        <circle class="ring" style="--i:3" cx="832" cy="430" r="23"/>
+        <circle class="n" style="--i:0" cx="577" cy="159" r="23" fill="url(#nb)"/>
+        <circle class="n" style="--i:1" cx="831" cy="154" r="24" fill="url(#nt)"/>
+        <circle class="n" style="--i:2" cx="577" cy="431" r="23" fill="url(#nb)"/>
+        <circle class="n" style="--i:3" cx="832" cy="430" r="23" fill="url(#nb)"/>
+      </g>
+      <text class="w" x="455" y="565" textLength="500" lengthAdjust="spacingAndGlyphs" fill="url(#tg)">NomaByte</text>
+      <text class="s" x="603" y="627" textLength="197" lengthAdjust="spacingAndGlyphs" fill="#2d5aa0">STUDIO</text>
+    </svg>
+  </div>
+
+  <!-- Rain Animation Canvas -->
+  <canvas id="rainCanvas"></canvas>
+
+  <!-- React App Root -->
+  <div id="root" class="relative z-10"></div>
+
+  <!-- Script for Rain Canvas & Intro Dismiss -->
+  <script>
+    // Intro Auto-Close
+    setTimeout(() => {
+      const intro = document.getElementById('introScreen');
+      if (intro) intro.classList.add('fade-out');
+    }, 3200);
+
+    // Rain Animation Loop
+    const canvas = document.getElementById('rainCanvas');
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+    let isRainActive = true;
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    const drops = [];
+    const maxDrops = 110;
+
+    for (let i = 0; i < maxDrops; i++) {
+      drops.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        length: Math.random() * 20 + 10,
+        speed: Math.random() * 8 + 4,
+        opacity: Math.random() * 0.35 + 0.15
+      });
+    }
+
+    function drawRain() {
+      ctx.clearRect(0, 0, width, height);
+      if (isRainActive) {
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 1.2;
+        for (let i = 0; i < drops.length; i++) {
+          const d = drops[i];
+          ctx.beginPath();
+          ctx.globalAlpha = d.opacity;
+          ctx.moveTo(d.x, d.y);
+          ctx.lineTo(d.x - d.length * 0.1, d.y + d.length);
+          ctx.stroke();
+
+          d.y += d.speed;
+          d.x -= d.speed * 0.1;
+
+          if (d.y > height) {
+            d.y = -20;
+            d.x = Math.random() * width;
+          }
+        }
+      }
+      requestAnimationFrame(drawRain);
+    }
+    drawRain();
+
+    window.toggleRainAnimation = function(state) {
+      isRainActive = state;
+    };
+  </script>
+
+  <!-- React Code -->
   <script type="text/babel">
-    const { useState } = React;
+    const { useState, useEffect } = React;
+
+    const translations = {
+      EN: {
+        navAbout: "#about",
+        navApps: "#apps",
+        navBeta: "Become a Beta-Tester",
+        navContact: "#contact",
+        navPrivacy: "#privacy",
+        heroTag: "AVAILABLE FOR NEW PROJECTS",
+        heroTitle: "NomaByte Studio",
+        heroSub: "Mobile Apps | Cross-Platform Flutter | Android & iOS",
+        heroDesc: "We build high-performance mobile applications and digital products focused on UI/UX excellence and real user value.",
+        btnBeta: "🚀 Join Beta Program",
+        btnApps: "Explore Apps",
+        showcaseTitle: "App Showcase",
+        showcaseSub: "OUR LATEST DEVELOPMENTS",
+        pdTitle: "Vodičák SK",
+        pdBadge: "Published on Google Play",
+        pdDesc: "Interactive driving exam test simulator for Slovakia. Complete question database, progress tracking, and smart test modes.",
+        secretTitle: "Project X",
+        secretBadge: "In Active Development",
+        secretDesc: "Next-gen intelligent mobile assistant. Stay tuned for closed beta testing announcement.",
+        contactTitle: "Get in Touch",
+        contactSub: "LET'S TALK",
+        supportTitle: "Technical Support & Inquiries",
+        supportDesc: "Have a project idea or need help with our apps? Drop us a line below or reach out via Telegram.",
+        formName: "YOUR NAME",
+        formEmail: "YOUR EMAIL",
+        formMsg: "YOUR MESSAGE",
+        btnSend: "SEND MESSAGE →",
+        btnSending: "SENDING...",
+        msgSuccess: "✓ Message sent successfully! Our team will get back to you shortly.",
+        betaModalTitle: "🚀 Closed Beta-Test Program",
+        betaModalSub: "Get early access to our unreleased apps and shape their future.",
+        betaDevice: "YOUR DEVICE MODEL (e.g., iPhone 15 / Galaxy S24)",
+        betaExp: "WHY ARE YOU INTERESTED IN TESTING?",
+        betaRulesTitle: "// BETA-TESTING TERMS & CONDITIONS:",
+        betaRule1: "Participation in the beta-testing program is 100% voluntary and UNPAID (no financial compensation).",
+        betaRule2: "You will receive early access to pre-release software 'as is' for feedback purposes.",
+        betaRule3: "You agree to report encountered bugs and UI flaws to the development team.",
+        betaCheckbox: "I have read and agree to the beta testing rules (I understand this is a voluntary unpaid test).",
+        btnSubmitBeta: "SUBMIT APPLICATION →",
+        betaSuccess: "✓ Application submitted! Check your email soon for invitations."
+      },
+      SK: {
+        navAbout: "#o_nas",
+        navApps: "#aplikacie",
+        navBeta: "Stac sa beta-testerom",
+        navContact: "#kontakt",
+        navPrivacy: "#vyhlasenie",
+        heroTag: "DOSTUPNÍ PRE NOVÉ PROJEKTY",
+        heroTitle: "NomaByte Studio",
+        heroSub: "Mobilné aplikácie | Flutter | Android & iOS",
+        heroDesc: "Vyvíjame vysokovýkonné mobilné aplikácie pre Android a iOS so zameraním na špičkový dizajn a reálnu užitočnosť.",
+        btnBeta: "🚀 Chcem testovať aplikácie",
+        btnApps: "Pozrieť aplikácie",
+        showcaseTitle: "Naša tvorba",
+        showcaseSub: "NAJNOVŠIE PROJEKTY",
+        pdTitle: "Vodičák SK",
+        pdBadge: "Publikované v Google Play",
+        pdDesc: "Interaktívny trenažér teoretických skúšok na vodičský preukaz v SR. Kompletná databáza otázok a štatistiky.",
+        secretTitle: "Projekt X",
+        secretBadge: "V aktívnom vývoji",
+        secretDesc: "Nový tajný projekt NomaByte Studio. Detaily zverejníme po ukončení uzavretého beta testovania.",
+        contactTitle: "Kontaktujte nás",
+        contactSub: "NAPÍŠTE NÁM",
+        supportTitle: "Technická podpora a dopyty",
+        supportDesc: "Máte nápad na aplikáciu alebo otázku? Napíšte nám správy nižšie alebo cez Telegram.",
+        formName: "VAŠE MENO",
+        formEmail: "VÁŠ E-MAIL",
+        formMsg: "VAŠA SPRÁVA",
+        btnSend: "ODESLAŤ SPRÁVU →",
+        btnSending: "ODESUELA SA...",
+        msgSuccess: "✓ Správa bola úspešne odoslaná! Odpovieme vám čo najskôr.",
+        betaModalTitle: "🚀 Prihláška do Beta-testovania",
+        betaModalSub: "Získajte prednostný prístup k novým aplikáciám pred oficiálnym vydaním.",
+        betaDevice: "MODEL VÁŠHO ZARIADENIA (napr. iPhone 15 / Galaxy S24)",
+        betaExp: "PREČO CHCETE TESTOVAŤ?",
+        betaRulesTitle: "// PODMIENKY BETA TESTOVANIA:",
+        betaRule1: "Účasť v beta programe je 100% dobrovoľná a NEPLATENÁ (bez finančnej odmeny).",
+        betaRule2: "Získavate predbežný prístup k aplikáciám v stave vývoja výhradne na účely spätného odberu.",
+        betaRule3: "Súhlasíte s nahlásením nájdených chýb vývojárom.",
+        betaCheckbox: "Prečítal som si a súhlasím s podmienkami beta testovania (rozumiem, že ide o neplatené testovanie).",
+        btnSubmitBeta: "ODOSLAŤ PRIHLÁŠKU →",
+        betaSuccess: "✓ Prihláška bola odoslaná! Sledujte svoj e-mail."
+      },
+      RU: {
+        navAbout: "#о_нас",
+        navApps: "#приложения",
+        navBeta: "Стать бета-тестером",
+        navContact: "#контакты",
+        navPrivacy: "#конфиденциальность",
+        heroTag: "ОТКРЫТЫ К НОВЫМ ПРОЕКТАМ",
+        heroTitle: "NomaByte Studio",
+        heroSub: "Мобильные приложения | Cross-Platform Flutter | Android & iOS",
+        heroDesc: "Создаем производительные мобильные приложения для iOS и Android с фокусировкой на красивом дизайне и пользе для людей.",
+        btnBeta: "🚀 Стать бета-тестером",
+        btnApps: "Смотреть приложения",
+        showcaseTitle: "Наши разработки",
+        showcaseSub: "ПОРТФОЛИО СТУДИИ",
+        pdTitle: "Vodičák SK",
+        pdBadge: "Опубликовано в Google Play",
+        pdDesc: "Интерактивный тренажер тестов ПДД Словакии. Полная база вопросов, статистика и умные режимы тренировки.",
+        secretTitle: "Проект X",
+        secretBadge: "В активной разработке",
+        secretDesc: "Секретный продукт NomaByte Studio. Подробности сразу после закрытого бета-теста.",
+        contactTitle: "Написать нам",
+        contactSub: "ТЕХПОДДЕРЖКА И СВЯЗЬ",
+        supportTitle: "Техподдержка и вопросы",
+        supportDesc: "Есть идея приложения или вопрос по нашим продуктам? Напишите нам прямо сюда или в Telegram.",
+        formName: "ВАШЕ ИМЯ",
+        formEmail: "ВАШ EMAIL",
+        formMsg: "ВАШЕ СООБЩЕНИЕ",
+        btnSend: "ОТПРАВИТЬ СООБЩЕНИЕ →",
+        btnSending: "ОТПРАВКА...",
+        msgSuccess: "✓ Сообщение отправлено! Наша команда ответит вам на почту.",
+        betaModalTitle: "🚀 Закрытый бета-тест",
+        betaModalSub: "Получите ранний доступ к нашим новым приложениям раньше всех.",
+        betaDevice: "МОДЕЛЬ ВАШЕГО ТЕЛЕФОНА (например, iPhone 15 / Galaxy S24)",
+        betaExp: "ПОЧЕМУ ВАМ ИНТЕРЕСЕН ТЕСТ?",
+        betaRulesTitle: "// ПРАВИЛА БЕТА-ТЕСТИРОВАНИЯ:",
+        betaRule1: "Участие в бета-тесте является 100% добровольным и НЕ ОПЛАЧИВАЕТСЯ (без денежного вознаграждения).",
+        betaRule2: "Вы получаете бесплатный ранний доступ к тестируемым приложениям.",
+        betaRule3: "Вы обязуетесь сообщать о найденных багах и ошибках разработчикам.",
+        betaCheckbox: "Я прочитал и согласен с правилами (понимаю, что тест бесплатный и не оплачивается).",
+        btnSubmitBeta: "ОТПРАВИТЬ ЗАЯВКУ →",
+        betaSuccess: "✓ Заявка отправлена! Ожидайте приглашение на почту."
+      }
+    };
 
     function App() {
-      const [selectedAnswer, setSelectedAnswer] = useState(null);
-      const [submitted, setSubmitted] = useState(false);
-      const [loading, setLoading] = useState(false);
-      const [showPrivacy, setShowPrivacy] = useState(false);
+      const [lang, setLang] = useState('EN');
+      const [rainOn, setRainOn] = useState(true);
       const [showBetaModal, setShowBetaModal] = useState(false);
+      const [showPrivacy, setShowPrivacy] = useState(false);
+
+      const [selectedAnswer, setSelectedAnswer] = useState(null);
+      const [loadingContact, setLoadingContact] = useState(false);
+      const [contactSubmitted, setContactSubmitted] = useState(false);
+
+      const [loadingBeta, setLoadingBeta] = useState(false);
       const [betaSubmitted, setBetaSubmitted] = useState(false);
-      const [betaLoading, setBetaLoading] = useState(false);
 
-      const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-      const [betaData, setBetaData] = useState({ name: '', email: '', device: '', experience: '', rulesAgreed: false });
+      const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
+      const [betaForm, setBetaForm] = useState({ name: '', email: '', device: '', experience: '', agreed: false });
 
-      // Отправка обычного сообщения
-      const handleFormSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        const formSpreeUrl = "https://formspree.io/f/mwlvypbn"; 
+      const t = translations[lang];
 
-        try {
-          const response = await fetch(formSpreeUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-            body: JSON.stringify(formData)
-          });
-
-          if (response.ok) {
-            setSubmitted(true);
-            setFormData({ name: '', email: '', message: '' });
-            setTimeout(() => setSubmitted(false), 5000);
-          } else {
-            alert("Ошибка при отправке. Напишите нам в Telegram.");
-          }
-        } catch (error) {
-          alert("Ошибка соединения.");
-        } finally {
-          setLoading(false);
-        }
+      const handleToggleRain = () => {
+        const newState = !rainOn;
+        setRainOn(newState);
+        if (window.toggleRainAnimation) window.toggleRainAnimation(newState);
       };
 
-      // Отправка заявки бета-тестера
-      const handleBetaSubmit = async (e) => {
+      // Formspree Contact Form Submit
+      const handleContactSubmit = async (e) => {
         e.preventDefault();
-        if (!betaData.rulesAgreed) {
-          alert("Пожалуйста, подтвердите согласие с правилами бета-тестирования.");
-          return;
-        }
-
-        setBetaLoading(true);
-        const formSpreeUrl = "https://formspree.io/f/mwlvypbn"; 
-
+        setLoadingContact(true);
         try {
-          const response = await fetch(formSpreeUrl, {
+          const res = await fetch("https://formspree.io/f/mwlvypbn", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
             body: JSON.stringify({
-              subject: "🚀 Новая заявка в бета-тестеры!",
-              name: betaData.name,
-              email: betaData.email,
-              device: betaData.device,
-              experience: betaData.experience,
-              rulesAgreed: "Согласен с правилами (Бесплатный тест)"
+              subject: "💬 Новое сообщение из формы связи nomabyte.com",
+              name: contactForm.name,
+              email: contactForm.email,
+              message: contactForm.message
             })
           });
+          if (res.ok) {
+            setContactSubmitted(true);
+            setContactForm({ name: '', email: '', message: '' });
+            setTimeout(() => setContactSubmitted(false), 5000);
+          } else {
+            alert("Error sending message.");
+          }
+        } catch(err) {
+          alert("Connection error.");
+        } finally {
+          setLoadingContact(false);
+        }
+      };
 
-          if (response.ok) {
+      // Formspree Beta Application Submit
+      const handleBetaSubmit = async (e) => {
+        e.preventDefault();
+        if (!betaForm.agreed) {
+          alert("Please accept the terms of testing.");
+          return;
+        }
+        setLoadingBeta(true);
+        try {
+          const res = await fetch("https://formspree.io/f/mwlvypbn", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({
+              subject: "🚀 НОВАЯ ЗАЯВКА В БЕТА-ТЕСТЕРЫ!",
+              applicant_name: betaForm.name,
+              applicant_email: betaForm.email,
+              device: betaForm.device,
+              experience: betaForm.experience,
+              rules_agreed: "ДА (Согласен с правилами бесплатного теста)"
+            })
+          });
+          if (res.ok) {
             setBetaSubmitted(true);
             setTimeout(() => {
               setBetaSubmitted(false);
               setShowBetaModal(false);
-              setBetaData({ name: '', email: '', device: '', experience: '', rulesAgreed: false });
-            }, 4000);
+              setBetaForm({ name: '', email: '', device: '', experience: '', agreed: false });
+            }, 3500);
           } else {
-            alert("Ошибка при отправке заявки.");
+            alert("Error sending application.");
           }
-        } catch (error) {
-          alert("Ошибка соединения.");
+        } catch(err) {
+          alert("Connection error.");
         } finally {
-          setBetaLoading(false);
+          setLoadingBeta(false);
         }
       };
 
       return (
-        <div class="min-h-screen relative overflow-hidden bg-[#08090c]">
-          {/* Background Grid & Glows */}
-          <div class="fixed inset-0 pointer-events-none z-0">
-            <div class="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px] opacity-25"></div>
-            <div class="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-cyan-500/10 blur-[140px] rounded-full animate-glow"></div>
-            <div class="absolute bottom-[-10%] right-[-5%] w-[600px] h-[400px] bg-blue-600/10 blur-[150px] rounded-full"></div>
-          </div>
-
-          {/* Navigation Bar */}
-          <header class="relative z-50 border-b border-slate-800/80 bg-[#08090c]/80 backdrop-blur-md sticky top-0">
+        <div class="min-h-screen">
+          {/* Header Bar */}
+          <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-[#050608]/85 backdrop-blur-md">
             <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-              <div class="flex items-center gap-2 font-mono text-sm tracking-wider">
+              
+              <div class="flex items-center gap-2 font-mono-code text-xs md:text-sm tracking-wider">
                 <span class="text-cyan-400 font-bold">&gt;</span>
                 <span class="text-slate-100 font-semibold">nomabyte@studio:~$</span>
                 <span class="w-2 h-4 bg-cyan-400 animate-pulse inline-block"></span>
               </div>
-              
-              <nav class="hidden md:flex items-center gap-8 text-xs font-mono text-slate-400">
-                <a href="#about" class="hover:text-cyan-400 transition-colors">#about</a>
-                <a href="#apps" class="hover:text-cyan-400 transition-colors">#apps</a>
-                <button onClick={() => setShowBetaModal(true)} class="text-cyan-400 hover:underline font-bold">#стать_бета_тестером</button>
-                <a href="#contact" class="hover:text-cyan-400 transition-colors">#contact</a>
-                <button onClick={() => setShowPrivacy(true)} class="hover:text-cyan-400 transition-colors">#privacy</button>
+
+              {/* Navigation Links */}
+              <nav class="hidden md:flex items-center gap-6 font-mono-code text-xs text-slate-400">
+                <a href="#about" class="hover:text-cyan-400 transition-colors">{t.navAbout}</a>
+                <a href="#apps" class="hover:text-cyan-400 transition-colors">{t.navApps}</a>
+                <button onClick={() => setShowBetaModal(true)} class="text-cyan-400 font-bold hover:underline">{t.navBeta}</button>
+                <a href="#contact" class="hover:text-cyan-400 transition-colors">{t.navContact}</a>
               </nav>
 
-              <button 
-                onClick={() => setShowBetaModal(true)}
-                class="px-4 py-1.5 rounded-lg border border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-mono text-xs transition-all shadow-[0_0_15px_rgba(6,182,212,0.15)]"
-              >
-                beta_tester
-              </button>
+              {/* Controls: Rain Toggle & Lang Switcher */}
+              <div class="flex items-center gap-3">
+                {/* Rain Toggle */}
+                <button
+                  onClick={handleToggleRain}
+                  class="px-2.5 py-1 rounded-lg border border-slate-800 bg-slate-900/80 hover:border-cyan-500/50 text-[11px] font-mono-code text-slate-300 transition-all flex items-center gap-1.5"
+                  title="Toggle Rain Animation"
+                >
+                  <span>🌧️ Rain:</span>
+                  <span class={rainOn ? "text-cyan-400 font-bold" : "text-slate-500"}>{rainOn ? 'ON' : 'OFF'}</span>
+                </button>
+
+                {/* Language Picker */}
+                <select
+                  value={lang}
+                  onChange={(e) => setLang(e.target.value)}
+                  class="px-2.5 py-1 rounded-lg border border-slate-800 bg-slate-900 text-cyan-400 text-xs font-mono-code font-bold focus:outline-none cursor-pointer"
+                >
+                  <option value="EN">EN</option>
+                  <option value="SK">SK</option>
+                  <option value="RU">RU</option>
+                </select>
+
+                <button
+                  onClick={() => setShowBetaModal(true)}
+                  class="hidden sm:inline-block px-3.5 py-1.5 rounded-lg border border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-mono-code text-xs font-bold transition-all shadow-[0_0_12px_rgba(6,182,212,0.15)]"
+                >
+                  Beta
+                </button>
+              </div>
+
             </div>
           </header>
 
           {/* Main Content */}
-          <main class="relative z-10 max-w-6xl mx-auto px-6 pt-20 pb-24">
-            
+          <main class="max-w-6xl mx-auto px-6 pt-16 pb-24">
+
             {/* Hero Section */}
             <section id="about" class="text-center py-12 md:py-20 flex flex-col items-center">
-              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-950/40 text-cyan-400 text-xs font-mono mb-8 backdrop-blur-sm">
+              <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-cyan-500/30 bg-cyan-950/40 text-cyan-400 text-xs font-mono-code mb-8 backdrop-blur-sm">
                 <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-                AVAILABLE FOR NEW PROJECTS
+                {t.heroTag}
               </div>
 
               <h1 class="text-5xl md:text-8xl font-black tracking-tight mb-6 bg-gradient-to-b from-white via-slate-100 to-slate-500 bg-clip-text text-transparent">
                 NomaByte <span class="text-cyan-400">Studio</span>
               </h1>
 
-              <div class="font-mono text-sm md:text-lg text-slate-400 mb-8 max-w-2xl flex items-center justify-center gap-2 flex-wrap">
-                <span class="text-cyan-400 font-bold">$</span>
-                <span>Mobile Apps</span>
-                <span class="text-slate-600">|</span>
-                <span>Cross-Platform Flutter</span>
-                <span class="text-slate-600">|</span>
-                <span>Android & iOS</span>
-              </div>
+              <p class="font-mono-code text-xs md:text-sm text-slate-400 mb-6 max-w-2xl">
+                {t.heroSub}
+              </p>
 
               <p class="text-slate-400 max-w-2xl text-sm md:text-base leading-relaxed mb-10">
-                Мы — независимая студия разработки мобильных приложений. Создаем продуманный софт, сочетающий высокую производительность, современный стек и реальную пользу для людей.
+                {t.heroDesc}
               </p>
 
               <div class="flex items-center gap-4 flex-wrap justify-center">
                 <button 
                   onClick={() => setShowBetaModal(true)}
-                  class="px-6 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition-all shadow-lg shadow-cyan-500/25 flex items-center gap-2"
+                  class="px-7 py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition-all shadow-lg shadow-cyan-500/25 flex items-center gap-2"
                 >
-                  🚀 Стать бета-тестером
+                  {t.btnBeta}
                 </button>
-                <a href="#apps" class="px-6 py-3 rounded-xl border border-slate-800 hover:border-slate-700 bg-slate-900/60 text-slate-300 font-semibold text-sm transition-all">
-                  Смотреть приложения
+                <a href="#apps" class="px-7 py-3.5 rounded-xl border border-slate-800 hover:border-slate-700 bg-slate-900/60 text-slate-300 font-semibold text-sm transition-all">
+                  {t.btnApps}
                 </a>
               </div>
             </section>
 
-            {/* App Showcase */}
+            {/* Showcase Section with Interactive Android Phone */}
             <section id="apps" class="py-20 border-t border-slate-800/60">
               <div class="text-center mb-16">
-                <h2 class="font-mono text-xs text-cyan-400 tracking-widest uppercase mb-2">// SHOWCASE</h2>
-                <h3 class="text-3xl md:text-5xl font-extrabold text-white">Наши разработки</h3>
+                <h2 class="font-mono-code text-xs text-cyan-400 tracking-widest uppercase mb-2">// {t.showcaseSub}</h2>
+                <h3 class="text-3xl md:text-5xl font-extrabold text-white">{t.showcaseTitle}</h3>
               </div>
 
               <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                 
-                {/* 3D Phone Mockup */}
-                <div class="lg:col-span-6 flex justify-center py-6">
-                  <div class="relative w-[280px] h-[570px] bg-slate-950 rounded-[45px] p-3 border-4 border-slate-700/80 shadow-[0_25px_60px_-15px_rgba(6,182,212,0.25)] animate-float perspective-1000">
+                {/* 3D Phone Demo */}
+                <div class="lg:col-span-6 flex justify-center py-4">
+                  <div class="relative w-[285px] h-[575px] bg-slate-950 rounded-[45px] p-3 border-4 border-slate-700/80 shadow-[0_25px_60px_-15px_rgba(6,182,212,0.25)] animate-phone">
                     <div class="absolute top-5 left-1/2 -translate-x-1/2 w-20 h-4 bg-slate-900 rounded-full z-30 flex items-center justify-center gap-2 border border-slate-800">
                       <div class="w-2.5 h-2.5 bg-black rounded-full border border-slate-700"></div>
                       <div class="w-1.5 h-1.5 bg-blue-950 rounded-full"></div>
@@ -218,18 +534,19 @@
                     <div class="w-full h-full bg-slate-900 rounded-[35px] overflow-hidden relative border border-slate-800 flex flex-col pt-8">
                       <div class="bg-blue-600 p-4 text-white">
                         <div class="flex items-center justify-between mb-1">
-                          <span class="text-[10px] font-mono tracking-wider opacity-80">VODIČÁK SK</span>
-                          <span class="text-[10px] font-mono bg-blue-700 px-2 py-0.5 rounded">v1.2</span>
+                          <span class="text-[10px] font-mono-code tracking-wider opacity-80">VODIČÁK SK</span>
+                          <span class="text-[10px] font-mono-code bg-blue-700 px-2 py-0.5 rounded">v1.2</span>
                         </div>
-                        <h4 class="font-bold text-sm">Тест ПДД Словакии</h4>
+                        <h4 class="font-bold text-sm">Vodičský test SR 2026</h4>
                       </div>
 
                       <div class="p-4 flex-1 flex flex-col justify-between bg-slate-950 text-xs">
                         <div>
-                          <div class="text-[10px] font-mono text-cyan-400 mb-2">Вопрос 1 / 20:</div>
+                          <div class="text-[10px] font-mono-code text-cyan-400 mb-2">Otázka 1 / 20:</div>
                           <p class="font-medium text-slate-200 mb-4 leading-relaxed">
                             Aké je maximálne povolené rýchlostné obmedzenie v obci?
                           </p>
+
                           <div class="space-y-2">
                             {[
                               { id: 'a', text: '50 km/h', correct: true },
@@ -245,18 +562,23 @@
                                     : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'
                                 }`}
                               >
-                                <span class="font-mono text-[10px] mr-2 text-slate-500">{opt.id.toUpperCase()})</span>
+                                <span class="font-mono-code text-[10px] mr-2 text-slate-500">{opt.id.toUpperCase()})</span>
                                 {opt.text}
                               </button>
                             ))}
                           </div>
                         </div>
+
                         {selectedAnswer && (
-                          <div class="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] text-center font-mono">
-                            ✓ Správne! (50 km/h v obci)
+                          <div class="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] text-center font-mono-code">
+                            ✓ Správne! (50 km/h)
                           </div>
                         )}
+                        <div class="text-center pt-2">
+                          <span class="text-[9px] font-mono-code text-slate-600 uppercase">Live Interactive Demo</span>
+                        </div>
                       </div>
+
                       <div class="h-4 bg-slate-950 flex justify-center items-center pb-1">
                         <div class="w-24 h-1 bg-slate-700 rounded-full"></div>
                       </div>
@@ -264,36 +586,48 @@
                   </div>
                 </div>
 
-                {/* Descriptions & Beta CTA */}
-                <div class="lg:col-span-6 space-y-8">
-                  <div class="p-6 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-slate-700 transition-all">
+                {/* Cards */}
+                <div class="lg:col-span-6 space-y-6">
+                  {/* Vodičák SK */}
+                  <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition-all backdrop-blur-sm">
                     <div class="flex items-center gap-3 mb-4">
-                      <div class="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold font-mono">SK</div>
+                      <div class="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold font-mono-code">SK</div>
                       <div>
-                        <h4 class="text-xl font-bold text-white">Vodičák SK</h4>
-                        <span class="text-xs font-mono text-emerald-400 flex items-center gap-1">
-                          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Опубликовано в Google Play
+                        <h4 class="text-xl font-bold text-white">{t.pdTitle}</h4>
+                        <span class="text-xs font-mono-code text-emerald-400 flex items-center gap-1">
+                          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> {t.pdBadge}
                         </span>
                       </div>
                     </div>
                     <p class="text-slate-400 text-sm leading-relaxed mb-6">
-                      Приложение для подготовки к теоретическому экзамену по вождению в Словакии. Интерактивные тесты и статистика.
+                      {t.pdDesc}
                     </p>
-                    <button onClick={() => setShowPrivacy(true)} class="text-xs font-mono text-cyan-400 hover:underline flex items-center gap-1">
-                      📄 Zásady ochrany osobných údajov &rarr;
-                    </button>
+                    <div class="flex items-center gap-3">
+                      <span class="px-3 py-1 rounded-md bg-slate-800 text-slate-300 font-mono-code text-xs">Flutter</span>
+                      <span class="px-3 py-1 rounded-md bg-slate-800 text-slate-300 font-mono-code text-xs">Dart</span>
+                      <span class="px-3 py-1 rounded-md bg-slate-800 text-slate-300 font-mono-code text-xs">Firebase</span>
+                    </div>
                   </div>
 
-                  <div class="p-6 rounded-2xl bg-cyan-950/20 border border-cyan-500/30 flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div>
-                      <h4 class="text-lg font-bold text-white mb-1">Хотите тестировать новые фичи первыми?</h4>
-                      <p class="text-xs text-slate-400">Присоединяйтесь к закрытой программе бета-тестирования NomaByte.</p>
+                  {/* Secret Project X */}
+                  <div class="p-6 rounded-2xl bg-cyan-950/20 border border-dashed border-cyan-500/30 backdrop-blur-sm">
+                    <div class="flex items-center gap-3 mb-4">
+                      <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 font-mono-code font-bold">?</div>
+                      <div>
+                        <h4 class="text-xl font-bold text-white">{t.secretTitle}</h4>
+                        <span class="text-xs font-mono-code text-cyan-400 flex items-center gap-1">
+                          <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span> {t.secretBadge}
+                        </span>
+                      </div>
                     </div>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                      {t.secretDesc}
+                    </p>
                     <button 
                       onClick={() => setShowBetaModal(true)}
-                      class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs font-mono whitespace-nowrap transition-all shadow-md"
+                      class="px-4 py-2 rounded-xl bg-cyan-500/20 border border-cyan-500/40 hover:bg-cyan-500/30 text-cyan-300 font-mono-code text-xs font-bold transition-all"
                     >
-                      Подать заявку
+                      Apply for Beta Access →
                     </button>
                   </div>
                 </div>
@@ -301,63 +635,84 @@
               </div>
             </section>
 
-            {/* Contact Section */}
+            {/* Contact & Technical Support Form */}
             <section id="contact" class="py-20 border-t border-slate-800/60">
               <div class="max-w-3xl mx-auto">
                 <div class="text-center mb-12">
-                  <h2 class="font-mono text-xs text-cyan-400 tracking-widest uppercase mb-2">// GET IN TOUCH</h2>
-                  <h3 class="text-3xl md:text-5xl font-extrabold text-white mb-4">Написать нам</h3>
+                  <h2 class="font-mono-code text-xs text-cyan-400 tracking-widest uppercase mb-2">// {t.contactSub}</h2>
+                  <h3 class="text-3xl md:text-5xl font-extrabold text-white mb-3">{t.contactTitle}</h3>
+                  <p class="text-slate-400 text-sm">{t.supportDesc}</p>
                 </div>
 
-                <form onSubmit={handleFormSubmit} class="p-8 rounded-3xl bg-slate-900/40 border border-slate-800 space-y-5">
+                {/* Direct Telegram */}
+                <div class="mb-8">
+                  <a
+                    href="https://t.me/nomabytestudio"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-cyan-500/50 transition-all flex items-center justify-between group"
+                  >
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 font-bold font-mono-code">TG</div>
+                      <div>
+                        <div class="font-bold text-white text-sm">Telegram Direct Support</div>
+                        <div class="text-xs font-mono-code text-slate-400">@nomabytestudio</div>
+                      </div>
+                    </div>
+                    <span class="text-cyan-400 font-mono-code text-lg group-hover:translate-x-1 transition-transform">&rarr;</span>
+                  </a>
+                </div>
+
+                {/* Support Form */}
+                <form onSubmit={handleContactSubmit} class="p-8 rounded-3xl bg-slate-900/40 border border-slate-800 space-y-5 backdrop-blur-sm">
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
-                      <label class="block font-mono text-xs text-slate-400 mb-2">ВАШЕ ИМЯ</label>
+                      <label class="block font-mono-code text-xs text-slate-400 mb-2">{t.formName}</label>
                       <input
                         type="text"
-                        name="name"
                         required
-                        placeholder="Саша"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        placeholder="Alexandr"
+                        value={contactForm.name}
+                        onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
                         class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 focus:outline-none focus:border-cyan-500 text-sm"
                       />
                     </div>
                     <div>
-                      <label class="block font-mono text-xs text-slate-400 mb-2">EMAIL</label>
+                      <label class="block font-mono-code text-xs text-slate-400 mb-2">{t.formEmail}</label>
                       <input
                         type="email"
-                        name="email"
                         required
                         placeholder="name@domain.com"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        value={contactForm.email}
+                        onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
                         class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 focus:outline-none focus:border-cyan-500 text-sm"
                       />
                     </div>
                   </div>
+
                   <div>
-                    <label class="block font-mono text-xs text-slate-400 mb-2">СООБЩЕНИЕ</label>
+                    <label class="block font-mono-code text-xs text-slate-400 mb-2">{t.formMsg}</label>
                     <textarea
                       rows="4"
-                      name="message"
                       required
-                      placeholder="Ваше сообщение..."
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      placeholder="Type your message or bug report here..."
+                      value={contactForm.message}
+                      onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
                       class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 focus:outline-none focus:border-cyan-500 text-sm resize-none"
                     ></textarea>
                   </div>
+
                   <button
                     type="submit"
-                    disabled={loading}
-                    class="w-full py-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition-all font-mono disabled:opacity-50"
+                    disabled={loadingContact}
+                    class="w-full py-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition-all font-mono-code disabled:opacity-50 shadow-lg shadow-cyan-500/20"
                   >
-                    {loading ? 'SENDING...' : 'SEND_MESSAGE →'}
+                    {loadingContact ? t.btnSending : t.btnSend}
                   </button>
-                  {submitted && (
-                    <div class="p-4 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-emerald-300 text-xs font-mono text-center">
-                      ✓ Сообщение успешно отправлено на почту разработчикам!
+
+                  {contactSubmitted && (
+                    <div class="p-4 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-emerald-300 text-xs font-mono-code text-center">
+                      {t.msgSuccess}
                     </div>
                   )}
                 </form>
@@ -366,104 +721,104 @@
 
           </main>
 
-          {/* Модальное окно: Стать бета-тестером */}
+          {/* Beta-Tester Application Modal */}
           {showBetaModal && (
             <div class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
               <div class="bg-slate-900 border border-slate-800 max-w-xl w-full rounded-3xl p-6 md:p-8 relative shadow-2xl my-8">
                 <button
                   onClick={() => setShowBetaModal(false)}
-                  class="absolute top-6 right-6 w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center font-mono font-bold"
+                  class="absolute top-6 right-6 w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center font-mono-code font-bold"
                 >
                   ✕
                 </button>
 
-                <h2 class="text-2xl font-bold text-white mb-2">🚀 Заявка на бета-тестирование</h2>
-                <p class="text-xs text-slate-400 mb-6 font-mono">Заполните анкету, чтобы получить ранний доступ к нашим новым приложениям.</p>
+                <h2 class="text-2xl font-bold text-white mb-1">{t.betaModalTitle}</h2>
+                <p class="text-xs text-slate-400 mb-6 font-mono-code">{t.betaModalSub}</p>
 
                 <form onSubmit={handleBetaSubmit} class="space-y-4">
                   <div>
-                    <label class="block font-mono text-xs text-slate-400 mb-1">ВАШЕ ИМЯ</label>
+                    <label class="block font-mono-code text-xs text-slate-400 mb-1">{t.formName}</label>
                     <input
                       type="text"
                       required
-                      placeholder="Александр"
-                      value={betaData.name}
-                      onChange={(e) => setBetaData({ ...betaData, name: e.target.value })}
+                      placeholder="Alexandr"
+                      value={betaForm.name}
+                      onChange={(e) => setBetaForm({ ...betaForm, name: e.target.value })}
                       class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-sm focus:outline-none focus:border-cyan-500"
                     />
                   </div>
 
                   <div>
-                    <label class="block font-mono text-xs text-slate-400 mb-1">EMAIL (Google Play / Apple ID)</label>
+                    <label class="block font-mono-code text-xs text-slate-400 mb-1">{t.formEmail} (Google Play / Apple ID)</label>
                     <input
                       type="email"
                       required
                       placeholder="name@gmail.com"
-                      value={betaData.email}
-                      onChange={(e) => setBetaData({ ...betaData, email: e.target.value })}
+                      value={betaForm.email}
+                      onChange={(e) => setBetaForm({ ...betaForm, email: e.target.value })}
                       class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-sm focus:outline-none focus:border-cyan-500"
                     />
                   </div>
 
                   <div>
-                    <label class="block font-mono text-xs text-slate-400 mb-1">ВАШ УСТРОЙСТВО</label>
+                    <label class="block font-mono-code text-xs text-slate-400 mb-1">{t.betaDevice}</label>
                     <input
                       type="text"
                       required
-                      placeholder="например, Samsung Galaxy S23 / iPhone 14"
-                      value={betaData.device}
-                      onChange={(e) => setBetaData({ ...betaData, device: e.target.value })}
+                      placeholder="iPhone 15 Pro / Samsung Galaxy S24"
+                      value={betaForm.device}
+                      onChange={(e) => setBetaForm({ ...betaForm, device: e.target.value })}
                       class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-sm focus:outline-none focus:border-cyan-500"
                     />
                   </div>
 
                   <div>
-                    <label class="block font-mono text-xs text-slate-400 mb-1">ПОЧЕМУ ИНТЕРЕСЕН ТЕСТ?</label>
+                    <label class="block font-mono-code text-xs text-slate-400 mb-1">{t.betaExp}</label>
                     <textarea
                       rows="2"
-                      placeholder="Кратко о себе или вашем опыте..."
-                      value={betaData.experience}
-                      onChange={(e) => setBetaData({ ...betaData, experience: e.target.value })}
+                      placeholder="Short note about why you want to test..."
+                      value={betaForm.experience}
+                      onChange={(e) => setBetaForm({ ...betaForm, experience: e.target.value })}
                       class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-sm focus:outline-none focus:border-cyan-500 resize-none"
                     ></textarea>
                   </div>
 
-                  {/* Правила бета-теста */}
-                  <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-400 space-y-2">
-                    <div class="font-bold text-slate-200 uppercase font-mono text-[11px]">// Правила бета-тестирования:</div>
-                    <ul class="list-disc pl-4 space-y-1">
-                      <li>Участие в программе бета-тестирования является добровольным и <strong>не оплачивается</strong> разработчиком.</li>
-                      <li>Тестировщик получает ранний доступ к программному обеспечению «как есть» (as is).</li>
-                      <li>Все найденные баги и отзывы обязуетесь отправлять разработчикам.</li>
+                  {/* Rules Box */}
+                  <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-400 space-y-1.5">
+                    <div class="font-bold text-slate-200 font-mono-code text-[11px]">{t.betaRulesTitle}</div>
+                    <ul class="list-disc pl-4 space-y-1 text-[11px]">
+                      <li>{t.betaRule1}</li>
+                      <li>{t.betaRule2}</li>
+                      <li>{t.betaRule3}</li>
                     </ul>
                   </div>
 
-                  {/* Чекбокс согласия */}
-                  <div class="flex items-start gap-3 pt-2">
+                  {/* Checkbox */}
+                  <div class="flex items-start gap-3 pt-1">
                     <input
                       type="checkbox"
-                      id="rules"
+                      id="betaTerms"
                       required
-                      checked={betaData.rulesAgreed}
-                      onChange={(e) => setBetaData({ ...betaData, rulesAgreed: e.target.checked })}
+                      checked={betaForm.agreed}
+                      onChange={(e) => setBetaForm({ ...betaForm, agreed: e.target.checked })}
                       class="mt-0.5 w-4 h-4 rounded bg-slate-950 border-slate-800 text-cyan-500 focus:ring-0 cursor-pointer"
                     />
-                    <label for="rules" class="text-xs text-slate-300 cursor-pointer select-none">
-                      Я прочитал и полностью согласен с правилами бета-тестирования (понимаю, что тест бесплатный и без денежного вознаграждения).
+                    <label for="betaTerms" class="text-xs text-slate-300 cursor-pointer select-none leading-tight">
+                      {t.betaCheckbox}
                     </label>
                   </div>
 
                   <button
                     type="submit"
-                    disabled={betaLoading}
-                    class="w-full py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition-all font-mono shadow-lg disabled:opacity-50"
+                    disabled={loadingBeta}
+                    class="w-full py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition-all font-mono-code shadow-lg disabled:opacity-50"
                   >
-                    {betaLoading ? 'ОТПРАВКА...' : 'ОТПРАВИТЬ ЗАЯВКУ →'}
+                    {loadingBeta ? 'SUBMITTING...' : t.btnSubmitBeta}
                   </button>
 
                   {betaSubmitted && (
-                    <div class="p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-emerald-300 text-xs font-mono text-center">
-                      ✓ Анкета успешно отправлена разработчикам! Ждите приглашение.
+                    <div class="p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-emerald-300 text-xs font-mono-code text-center">
+                      {t.betaSuccess}
                     </div>
                   )}
                 </form>
@@ -474,38 +829,41 @@
           {/* Privacy Policy Modal */}
           {showPrivacy && (
             <div class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-              <div class="bg-slate-900 border border-slate-800 max-w-3xl w-full max-h-[85vh] rounded-3xl p-6 md:p-8 overflow-y-auto relative shadow-2xl">
+              <div class="bg-slate-900 border border-slate-800 max-w-2xl w-full max-h-[85vh] rounded-3xl p-6 md:p-8 overflow-y-auto relative shadow-2xl">
                 <button
                   onClick={() => setShowPrivacy(false)}
-                  class="absolute top-6 right-6 w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center font-mono font-bold"
+                  class="absolute top-6 right-6 w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center font-mono-code font-bold"
                 >
                   ✕
                 </button>
                 <h2 class="text-2xl font-bold text-white mb-2">Zásady ochrany osobných údajov</h2>
-                <div class="text-xs font-mono text-cyan-400 mb-6">Aplikácia: Vodičák SK | Vývojár: NomaByte</div>
+                <div class="text-xs font-mono-code text-cyan-400 mb-6">Aplikácia: Vodičák SK | Vývojár: NomaByte Studio</div>
                 <div class="text-slate-300 text-sm space-y-4 leading-relaxed">
-                  <p>Aplikácia Vodičák SK rešpektuje vaše súkromie. Používame anonymnú autentifikáciu cez Firebase a ukladáme iba dáta o pokroku v testoch.</p>
-                  <p>Služby tretích strán ako Google AdMob a Firebase Analytics môžu zhromažδιť anonymné štatistiky a ID zariadenia.</p>
+                  <p>Aplikácia Vodičák SK rešpektuje vaše súkromie. Používame anonymnú autentifikáciu cez Firebase Authentication a ukladáme anonymné dáta pokroku v testoch.</p>
+                  <p>Tretie strany (Google AdMob, Firebase Analytics) môžu zhromažďovať anonymné dáta na účely reklamy a analýzy pádu aplikácie.</p>
                   <p>Kontakt: <a href="mailto:nomabyte@gmail.com" class="text-cyan-400">nomabyte@gmail.com</a></p>
                 </div>
                 <div class="mt-8 text-center">
-                  <button onClick={() => setShowPrivacy(false)} class="px-6 py-2 rounded-xl bg-cyan-500 text-slate-950 font-bold text-xs font-mono">Zavrieť</button>
+                  <button onClick={() => setShowPrivacy(false)} class="px-6 py-2 rounded-xl bg-cyan-500 text-slate-950 font-bold text-xs font-mono-code">Zavrieť</button>
                 </div>
               </div>
             </div>
           )}
 
           {/* Footer */}
-          <footer class="border-t border-slate-800/80 py-8 bg-[#050608]">
-            <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 font-mono text-xs text-slate-500">
+          <footer class="border-t border-slate-800/80 py-8 bg-[#030406]">
+            <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 font-mono-code text-xs text-slate-500">
               <div>© 2026 NomaByte Studio. All rights reserved.</div>
               <div class="flex items-center gap-6">
                 <button onClick={() => setShowPrivacy(true)} class="hover:text-cyan-400 transition-colors">Privacy Policy</button>
                 <span>•</span>
                 <a href="https://t.me/nomabytestudio" target="_blank" class="hover:text-cyan-400 transition-colors">Telegram</a>
+                <span>•</span>
+                <span>Bratislava, SK</span>
               </div>
             </div>
           </footer>
+
         </div>
       );
     }
