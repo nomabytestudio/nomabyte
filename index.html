@@ -5,26 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NomaByte Studio — Mobile App Development</title>
   
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="apple-touch-icon" href="/favicon.png" />
 
-  <!-- Fonts & Tailwind CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- React & ReactDOM -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-
-  <!-- Babel Compiler -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <style>
     body { font-family: 'Montserrat', sans-serif; background-color: #050608; color: #f1f5f9; overflow-x: hidden; }
     .font-mono-code { font-family: 'JetBrains Mono', monospace; }
 
-    /* Canvas дождя */
     #rainCanvas {
       position: fixed;
       top: 0;
@@ -36,7 +30,6 @@
       opacity: 0.6;
     }
 
-    /* Интро Экран */
     #introScreen {
       position: fixed;
       inset: 0;
@@ -53,7 +46,6 @@
       pointer-events: none;
     }
 
-    /* Анимация 3D SVG Логотипа */
     .l { stroke: url(#g); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; fill: none; stroke-dasharray: 1; stroke-dashoffset: 1; }
     .halo { fill: #27c7ff; opacity: 0; filter: blur(14px); transform-box: fill-box; transform-origin: center; transform: scale(0); }
     .n { transform-box: fill-box; transform-origin: center; transform: scale(0); }
@@ -79,10 +71,7 @@
     @keyframes core { 0% { opacity: 0; } 100% { opacity: .6; } }
     @keyframes fade { to { opacity: 1; } }
 
-    /* МОЩНАЯ МОБИЛЬНАЯ АНИМАЦИЯ ТЕЛЕФОНА */
-    .phone-anim-container {
-      perspective: 1200px;
-    }
+    .phone-anim-container { perspective: 1200px; }
     .phone-anim {
       --phone-width: 310px;
       --cycle: 14s;
@@ -156,16 +145,10 @@
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
-
-    @media (prefers-reduced-motion: reduce) {
-      .phone-anim { animation: none; }
-      .phone-anim__strip { animation: none; }
-    }
   </style>
 </head>
 <body class="selection:bg-cyan-500/30 selection:text-cyan-300">
 
-  <!-- 3D Интро Экран -->
   <div id="introScreen" class="go">
     <svg id="logoSvg" viewBox="440 90 530 560" style="width: min(90vw, 480px); height: auto; overflow: visible;">
       <defs>
@@ -207,13 +190,9 @@
     </svg>
   </div>
 
-  <!-- Canvas анимации дождя -->
   <canvas id="rainCanvas"></canvas>
-
-  <!-- React Приложение -->
   <div id="root" class="relative z-10"></div>
 
-  <!-- Скрипт управлением Дождя и Закрытия Интро -->
   <script>
     setTimeout(() => {
       const intro = document.getElementById('introScreen');
@@ -273,7 +252,6 @@
     };
   </script>
 
-  <!-- Код React (Строго на английском языке) -->
   <script type="text/babel">
     const { useState } = React;
 
@@ -344,7 +322,7 @@
         pdDesc: "Interaktívny trenažér teoretických skúšok na vodičský preukaz v SR. Kompletná databáza otázok a štatistiky.",
         secretTitle: "Projekt X",
         secretBadge: "V aktívnom vývoji",
-        secretDesc: "Nový tajný projekt NomaByte Studio. Detaily zverejníme po ukonчении uzavretého beta testovania.",
+        secretDesc: "Nový tajný projekt NomaByte Studio. Detaily zverejníme po ukončení uzavretého beta testovania.",
         contactTitle: "Kontaktujte nás",
         contactSub: "NAPÍŠTE NÁM",
         supportDesc: "Máte nápad na aplikáciu alebo otázku? Napíšte nám správy nižšie alebo cez Telegram.",
@@ -375,7 +353,7 @@
         heroTag: "ОТКРЫТЫ К НОВЫМ ПРОЕКТАМ",
         heroTitle: "NomaByte Studio",
         heroSub: "Мобильные приложения | Cross-Platform Flutter | Android & iOS",
-        heroDesc: "Создаем производительные мобильные приложения для iOS и Android с фокусировкой на красивом дизайне и пользе для людей.",
+        heroDesc: "Создаем производительные мобильные приложения для iOS и Android s фокусировкой на красивом дизайне и пользе для людей.",
         btnBeta: "🚀 Стать бета-тестером",
         btnApps: "Смотреть приложения",
         showcaseTitle: "Наши разработки",
@@ -510,7 +488,6 @@
 
       return (
         <div class="min-h-screen">
-          {/* Header Bar */}
           <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-[#050608]/85 backdrop-blur-md">
             <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
               
@@ -520,7 +497,6 @@
                 <span class="w-2 h-4 bg-cyan-400 animate-pulse inline-block"></span>
               </div>
 
-              {/* Navigation */}
               <nav class="hidden md:flex items-center gap-6 font-mono-code text-xs text-slate-400">
                 <a href="#about" class="hover:text-cyan-400 transition-colors">{t.navAbout}</a>
                 <a href="#apps" class="hover:text-cyan-400 transition-colors">{t.navApps}</a>
@@ -529,7 +505,6 @@
                 <a href="#contact" class="hover:text-cyan-400 transition-colors">{t.navContact}</a>
               </nav>
 
-              {/* Controls */}
               <div class="flex items-center gap-3">
                 <button
                   onClick={handleToggleRain}
@@ -560,10 +535,8 @@
             </div>
           </header>
 
-          {/* Main Content */}
           <main class="max-w-6xl mx-auto px-6 pt-16 pb-24">
 
-            {/* Hero Section */}
             <section id="about" class="text-center py-12 md:py-20 flex flex-col items-center">
               <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-cyan-500/30 bg-cyan-950/40 text-cyan-400 text-xs font-mono-code mb-8 backdrop-blur-sm">
                 <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
@@ -598,7 +571,6 @@
               </div>
             </section>
 
-            {/* Showcase Section with Powerful 3D Phone Animation */}
             <section id="apps" class="py-20 border-t border-slate-800/60">
               <div class="text-center mb-16">
                 <h2 class="font-mono-code text-xs text-cyan-400 tracking-widest uppercase mb-2">// {t.showcaseSub}</h2>
@@ -607,7 +579,6 @@
 
               <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                 
-                {/* 3D Phone Animation */}
                 <div class="lg:col-span-6 flex justify-center py-6 phone-anim-container">
                   <div class="phone-anim">
                     <div class="phone-anim__screen">
@@ -623,7 +594,6 @@
                   </div>
                 </div>
 
-                {/* Project Cards */}
                 <div class="lg:col-span-6 space-y-6">
                   <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition-all backdrop-blur-sm">
                     <div class="flex items-center gap-3 mb-4">
@@ -666,7 +636,6 @@
               </div>
             </section>
 
-            {/* Contact & Support Section */}
             <section id="contact" class="py-20 border-t border-slate-800/60">
               <div class="max-w-3xl mx-auto">
                 <div class="text-center mb-12">
@@ -750,7 +719,6 @@
 
           </main>
 
-          {/* Modal: TESTER PORTAL / DASHBOARD */}
           {showTesterPortal && (
             <div class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
               <div class="bg-slate-900 border border-slate-800 max-w-2xl w-full rounded-3xl p-6 md:p-8 relative shadow-2xl my-8">
@@ -912,7 +880,6 @@
             </div>
           )}
 
-          {/* Modal: Beta Application */}
           {showBetaModal && (
             <div class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
               <div class="bg-slate-900 border border-slate-800 max-w-xl w-full rounded-3xl p-6 md:p-8 relative shadow-2xl my-8">
@@ -1015,7 +982,6 @@
             </div>
           )}
 
-          {/* Privacy Policy */}
           {showPrivacy && (
             <div class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
               <div class="bg-slate-900 border border-slate-800 max-w-2xl w-full max-h-[85vh] rounded-3xl p-6 md:p-8 overflow-y-auto relative shadow-2xl">
@@ -1039,7 +1005,6 @@
             </div>
           )}
 
-          {/* Footer */}
           <footer class="border-t border-slate-800/80 py-8 bg-[#030406]">
             <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 font-mono-code text-xs text-slate-500">
               <div>© 2026 NomaByte Studio. All rights reserved.</div>
