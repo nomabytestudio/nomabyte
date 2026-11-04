@@ -5,20 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NomaByte Studio — Mobile App Development</title>
   
+  <!-- Favicon -->
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="apple-touch-icon" href="/favicon.png" />
 
+  <!-- Fonts & Tailwind CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   
+  <!-- React & ReactDOM -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+
+  <!-- Babel Compiler -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <style>
-    body { font-family: 'Montserrat', sans-serif; background-color: #050608; color: #f1f5f9; overflow-x: hidden; }
+    body { font-family: 'Montserrat', sans-serif; background-color: #050608; color: #f1f5f9; }
     .font-mono-code { font-family: 'JetBrains Mono', monospace; }
 
+    /* Canvas дождя */
     #rainCanvas {
       position: fixed;
       top: 0;
@@ -30,6 +36,7 @@
       opacity: 0.6;
     }
 
+    /* Интро Экран */
     #introScreen {
       position: fixed;
       inset: 0;
@@ -46,11 +53,13 @@
       pointer-events: none;
     }
 
+    /* Анимация 3D SVG Логотипа */
     .l { stroke: url(#g); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; fill: none; stroke-dasharray: 1; stroke-dashoffset: 1; }
     .halo { fill: #27c7ff; opacity: 0; filter: blur(14px); transform-box: fill-box; transform-origin: center; transform: scale(0); }
     .n { transform-box: fill-box; transform-origin: center; transform: scale(0); }
     .ring { fill: none; stroke: #52dcff; stroke-width: 2.5; opacity: 0; transform-box: fill-box; transform-origin: center; }
     .core { fill: #b8f3ff; opacity: 0; filter: blur(8px); }
+    .pulse { fill: #d6f8ff; filter: drop-shadow(0 0 7px #2fd0ff) drop-shadow(0 0 3px #fff); }
     .w, .s { opacity: 0; }
     .w { font-weight: 700; font-size: 92px; }
     .s { font-weight: 600; font-size: 34px; }
@@ -71,84 +80,16 @@
     @keyframes core { 0% { opacity: 0; } 100% { opacity: .6; } }
     @keyframes fade { to { opacity: 1; } }
 
-    .phone-anim-container { perspective: 1200px; }
-    .phone-anim {
-      --phone-width: 310px;
-      --cycle: 14s;
-      position: relative;
-      width: var(--phone-width);
-      aspect-ratio: 510 / 1017;
-      margin: 0 auto;
-      transform-style: preserve-3d;
-      animation: phoneFloat 6s ease-in-out infinite, phoneTilt 8s ease-in-out infinite alternate;
-      filter: drop-shadow(0 20px 40px rgba(6, 182, 212, 0.3));
+    @keyframes floatPhone {
+      0%, 100% { transform: translateY(0px) rotateX(6deg) rotateY(-4deg); }
+      50% { transform: translateY(-14px) rotateX(10deg) rotateY(-1deg); }
     }
-    .phone-anim::before {
-      content: '';
-      position: absolute;
-      inset: -4px;
-      background: linear-gradient(45deg, #06b6d4, #3b82f6, #6366f1, #06b6d4);
-      background-size: 400%;
-      border-radius: 11% / 5%;
-      z-index: -1;
-      opacity: 0.6;
-      filter: blur(12px);
-      animation: neonGlow 8s linear infinite;
-    }
-    .phone-anim__screen {
-      position: absolute;
-      left: 3.53%; top: 1.18%;
-      width: 92.94%; height: 97.35%;
-      overflow: hidden;
-      border-radius: 9% / 4.5%;
-      background: #000;
-    }
-    .phone-anim__strip {
-      display: flex;
-      width: 500%;
-      height: 100%;
-      animation: phone-slide var(--cycle) infinite;
-      will-change: transform;
-    }
-    .phone-anim__strip img {
-      width: 20%; height: 100%;
-      object-fit: cover; display: block;
-    }
-    .phone-anim__frame {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      pointer-events: none;
-    }
-
-    @keyframes phone-slide {
-      0%   { transform: translateX(0); }
-      21%  { transform: translateX(0);    animation-timing-function: cubic-bezier(.65,0,.35,1); }
-      25%  { transform: translateX(-20%); }
-      46%  { transform: translateX(-20%); animation-timing-function: cubic-bezier(.65,0,.35,1); }
-      50%  { transform: translateX(-40%); }
-      71%  { transform: translateX(-40%); animation-timing-function: cubic-bezier(.65,0,.35,1); }
-      75%  { transform: translateX(-60%); }
-      96%  { transform: translateX(-60%); animation-timing-function: cubic-bezier(.65,0,.35,1); }
-      100% { transform: translateX(-80%); }
-    }
-
-    @keyframes phoneFloat {
-      0%, 100% { transform: translateY(0px) rotateX(4deg) rotateY(-6deg); }
-      50% { transform: translateY(-16px) rotateX(8deg) rotateY(-2deg); }
-    }
-    @keyframes phoneTilt {
-      0% { transform: rotateZ(-2deg); }
-      100% { transform: rotateZ(2deg); }
-    }
-    @keyframes neonGlow {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
+    .animate-phone { animation: floatPhone 6s ease-in-out infinite; }
   </style>
 </head>
 <body class="selection:bg-cyan-500/30 selection:text-cyan-300">
 
+  <!-- 3D Интро Экран -->
   <div id="introScreen" class="go">
     <svg id="logoSvg" viewBox="440 90 530 560" style="width: min(90vw, 480px); height: auto; overflow: visible;">
       <defs>
@@ -190,9 +131,13 @@
     </svg>
   </div>
 
+  <!-- Canvas анимации дождя -->
   <canvas id="rainCanvas"></canvas>
+
+  <!-- React Приложение -->
   <div id="root" class="relative z-10"></div>
 
+  <!-- Скрипт управлением Дождя и Закрытия Интро -->
   <script>
     setTimeout(() => {
       const intro = document.getElementById('introScreen');
@@ -252,9 +197,11 @@
     };
   </script>
 
+  <!-- Код React -->
   <script type="text/babel">
     const { useState } = React;
 
+    // Списoк разрешенных тестеров (Способ 1: редактируйте этот список по мере необходимости)
     const AUTHORIZED_TESTERS = [
       { email: "tester1@nomabyte.com", password: "noma2026_tester1" },
       { email: "tester2@nomabyte.com", password: "noma2026_tester2" },
@@ -263,11 +210,11 @@
 
     const translations = {
       EN: {
-        navAbout: "About",
-        navApps: "Apps",
+        navAbout: "#about",
+        navApps: "#apps",
         navBeta: "Become a Beta-Tester",
         navPortal: "Tester Portal",
-        navContact: "Contact",
+        navContact: "#contact",
         heroTag: "AVAILABLE FOR NEW PROJECTS",
         heroTitle: "NomaByte Studio",
         heroSub: "Mobile Apps | Cross-Platform Flutter | Android & iOS",
@@ -304,16 +251,16 @@
         betaSuccess: "✓ Application submitted! Check your email soon for invitations."
       },
       SK: {
-        navAbout: "O nás",
-        navApps: "Aplikácie",
-        navBeta: "Stať sa testerom",
+        navAbout: "#o_nas",
+        navApps: "#aplikacie",
+        navBeta: "Stac sa beta-testerom",
         navPortal: "Portál pre testerov",
-        navContact: "Kontakt",
+        navContact: "#kontakt",
         heroTag: "DOSTUPNÍ PRE NOVÉ PROJEKTY",
         heroTitle: "NomaByte Studio",
         heroSub: "Mobilné aplikácie | Flutter | Android & iOS",
         heroDesc: "Vyvíjame vysokovýkonné mobilné aplikácie pre Android a iOS so zameraním na špičkový dizajn a reálnu užitočnosť.",
-        btnBeta: "🚀 Chcem testovať",
+        btnBeta: "🚀 Chcem testovať aplikácie",
         btnApps: "Pozrieť aplikácie",
         showcaseTitle: "Naša tvorba",
         showcaseSub: "NAJNOVŠIE PROJEKTY",
@@ -329,8 +276,8 @@
         formName: "VAŠE MENO",
         formEmail: "VÁŠ E-MAIL",
         formMsg: "VAŠA SPRÁVA",
-        btnSend: "ODOSLAŤ SPRÁVU →",
-        btnSending: "ODOSIELA SA...",
+        btnSend: "ODESLAŤ SPRÁVU →",
+        btnSending: "ODESUELA SA...",
         msgSuccess: "✓ Správa bola úspešne odoslaná! Odpovieme vám čo najskôr.",
         betaModalTitle: "🚀 Prihláška do Beta-testovania",
         betaModalSub: "Získajte prednostný prístup k novým aplikáciám pred oficiálnym vydaním.",
@@ -338,22 +285,22 @@
         betaExp: "PREČO CHCETE TESTOVAŤ?",
         betaRulesTitle: "// PODMIENKY BETA TESTOVANIA:",
         betaRule1: "Účasť v beta programe je 100% dobrovoľná a NEPLATENÁ (bez finančnej odmeny).",
-        betaRule2: "Získavate predbežný prístup k aplikáciám v stave vývoja výhradne na účely spätnej väzby.",
+        betaRule2: "Získavate predbežný prístup k aplikáciám v stave vývoja výhradne na účely spätného odberu.",
         betaRule3: "Súhlasíte s nahlásením nájdených chýb vývojárom.",
         betaCheckbox: "Prečítal som si a súhlasím s podmienkami beta testovania (rozumiem, že ide o neplatené testovanie).",
         btnSubmitBeta: "ODOSLAŤ PRIHLÁŠKU →",
         betaSuccess: "✓ Prihláška bola odoslaná! Sledujte svoj e-mail."
       },
       RU: {
-        navAbout: "О нас",
-        navApps: "Приложения",
-        navBeta: "Стать тестером",
+        navAbout: "#о_нас",
+        navApps: "#приложения",
+        navBeta: "Стать бета-тестером",
         navPortal: "Портал тестеров",
-        navContact: "Контакты",
+        navContact: "#контакты",
         heroTag: "ОТКРЫТЫ К НОВЫМ ПРОЕКТАМ",
         heroTitle: "NomaByte Studio",
         heroSub: "Мобильные приложения | Cross-Platform Flutter | Android & iOS",
-        heroDesc: "Создаем производительные мобильные приложения для iOS и Android s фокусировкой на красивом дизайне и пользе для людей.",
+        heroDesc: "Создаем производительные мобильные приложения для iOS и Android с фокусировкой на красивом дизайне и пользе для людей.",
         btnBeta: "🚀 Стать бета-тестером",
         btnApps: "Смотреть приложения",
         showcaseTitle: "Наши разработки",
@@ -394,10 +341,13 @@
       const [showTesterPortal, setShowTesterPortal] = useState(false);
       const [showPrivacy, setShowPrivacy] = useState(false);
 
+      // Состояние авторизации тестера
       const [authenticatedTester, setAuthenticatedTester] = useState(null);
       const [loginInput, setLoginInput] = useState({ email: '', password: '' });
       const [loginError, setLoginError] = useState(false);
 
+      // Состояния форм
+      const [selectedAnswer, setSelectedAnswer] = useState(null);
       const [loadingContact, setLoadingContact] = useState(false);
       const [contactSubmitted, setContactSubmitted] = useState(false);
       const [loadingBeta, setLoadingBeta] = useState(false);
@@ -415,6 +365,7 @@
         if (window.toggleRainAnimation) window.toggleRainAnimation(newState);
       };
 
+      // Проверка логина и пароля тестера
       const handleTesterLogin = (e) => {
         e.preventDefault();
         const found = AUTHORIZED_TESTERS.find(
@@ -428,6 +379,7 @@
         }
       };
 
+      // Отправка обычного сообщения связи
       const handleContactSubmit = async (e) => {
         e.preventDefault();
         setLoadingContact(true);
@@ -436,7 +388,7 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
             body: JSON.stringify({
-              subject: "💬 New Contact Message from nomabyte.com",
+              subject: "💬 Новое сообщение из формы связи nomabyte.com",
               name: contactForm.name,
               email: contactForm.email,
               message: contactForm.message
@@ -454,6 +406,7 @@
         }
       };
 
+      // Отправка заявки на Бета-тест
       const handleBetaSubmit = async (e) => {
         e.preventDefault();
         if (!betaForm.agreed) return;
@@ -463,12 +416,12 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
             body: JSON.stringify({
-              subject: "🚀 NEW BETA TESTER APPLICATION!",
+              subject: "🚀 НОВАЯ ЗАЯВКА В БЕТА-ТЕСТЕРЫ!",
               applicant_name: betaForm.name,
               applicant_email: betaForm.email,
               device: betaForm.device,
               experience: betaForm.experience,
-              rules_agreed: "YES (Agreed to unpaid test rules)"
+              rules_agreed: "ДА (Согласен с правилами)"
             })
           });
           if (res.ok) {
@@ -488,6 +441,7 @@
 
       return (
         <div class="min-h-screen">
+          {/* Header Bar */}
           <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-[#050608]/85 backdrop-blur-md">
             <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
               
@@ -497,6 +451,7 @@
                 <span class="w-2 h-4 bg-cyan-400 animate-pulse inline-block"></span>
               </div>
 
+              {/* Меню навигации */}
               <nav class="hidden md:flex items-center gap-6 font-mono-code text-xs text-slate-400">
                 <a href="#about" class="hover:text-cyan-400 transition-colors">{t.navAbout}</a>
                 <a href="#apps" class="hover:text-cyan-400 transition-colors">{t.navApps}</a>
@@ -505,6 +460,7 @@
                 <a href="#contact" class="hover:text-cyan-400 transition-colors">{t.navContact}</a>
               </nav>
 
+              {/* Управление: Переключатель дождя и языков */}
               <div class="flex items-center gap-3">
                 <button
                   onClick={handleToggleRain}
@@ -535,8 +491,10 @@
             </div>
           </header>
 
+          {/* Главное содержимое */}
           <main class="max-w-6xl mx-auto px-6 pt-16 pb-24">
 
+            {/* Hero Раздел */}
             <section id="about" class="text-center py-12 md:py-20 flex flex-col items-center">
               <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-cyan-500/30 bg-cyan-950/40 text-cyan-400 text-xs font-mono-code mb-8 backdrop-blur-sm">
                 <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
@@ -571,6 +529,7 @@
               </div>
             </section>
 
+            {/* Демонстрация Приложений */}
             <section id="apps" class="py-20 border-t border-slate-800/60">
               <div class="text-center mb-16">
                 <h2 class="font-mono-code text-xs text-cyan-400 tracking-widest uppercase mb-2">// {t.showcaseSub}</h2>
@@ -579,21 +538,70 @@
 
               <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                 
-                <div class="lg:col-span-6 flex justify-center py-6 phone-anim-container">
-                  <div class="phone-anim">
-                    <div class="phone-anim__screen">
-                      <div class="phone-anim__strip">
-                        <img src="img/screen-1.webp" alt="Vodičák SK — Google Play">
-                        <img src="img/screen-2.webp" alt="Language Selection">
-                        <img src="img/screen-3.webp" alt="Welcome Screen">
-                        <img src="img/screen-4.webp" alt="Test Category Selection">
-                        <img src="img/screen-1.webp" alt="" aria-hidden="true">
+                {/* 3D Телефон */}
+                <div class="lg:col-span-6 flex justify-center py-4">
+                  <div class="relative w-[285px] h-[575px] bg-slate-950 rounded-[45px] p-3 border-4 border-slate-700/80 shadow-[0_25px_60px_-15px_rgba(6,182,212,0.25)] animate-phone">
+                    <div class="absolute top-5 left-1/2 -translate-x-1/2 w-20 h-4 bg-slate-900 rounded-full z-30 flex items-center justify-center gap-2 border border-slate-800">
+                      <div class="w-2.5 h-2.5 bg-black rounded-full border border-slate-700"></div>
+                      <div class="w-1.5 h-1.5 bg-blue-950 rounded-full"></div>
+                    </div>
+
+                    <div class="w-full h-full bg-slate-900 rounded-[35px] overflow-hidden relative border border-slate-800 flex flex-col pt-8">
+                      <div class="bg-blue-600 p-4 text-white">
+                        <div class="flex items-center justify-between mb-1">
+                          <span class="text-[10px] font-mono-code tracking-wider opacity-80">VODIČÁK SK</span>
+                          <span class="text-[10px] font-mono-code bg-blue-700 px-2 py-0.5 rounded">v1.2</span>
+                        </div>
+                        <h4 class="font-bold text-sm">Vodičský test SR 2026</h4>
+                      </div>
+
+                      <div class="p-4 flex-1 flex flex-col justify-between bg-slate-950 text-xs">
+                        <div>
+                          <div class="text-[10px] font-mono-code text-cyan-400 mb-2">Otázka 1 / 20:</div>
+                          <p class="font-medium text-slate-200 mb-4 leading-relaxed">
+                            Aké je maximálne povolené rýchlostné obmedzenie v obci?
+                          </p>
+
+                          <div class="space-y-2">
+                            {[
+                              { id: 'a', text: '50 km/h', correct: true },
+                              { id: 'b', text: '60 km/h', correct: false },
+                              { id: 'c', text: '90 km/h', correct: false }
+                            ].map((opt) => (
+                              <button
+                                key={opt.id}
+                                onClick={() => setSelectedAnswer(opt.id)}
+                                class={`w-full text-left p-2.5 rounded-lg border transition-all ${
+                                  selectedAnswer === opt.id
+                                    ? opt.correct ? 'bg-emerald-950/60 border-emerald-500 text-emerald-300' : 'bg-rose-950/60 border-rose-500 text-rose-300'
+                                    : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'
+                                }`}
+                              >
+                                <span class="font-mono-code text-[10px] mr-2 text-slate-500">{opt.id.toUpperCase()})</span>
+                                {opt.text}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {selectedAnswer && (
+                          <div class="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] text-center font-mono-code">
+                            ✓ Správne! (50 km/h)
+                          </div>
+                        )}
+                        <div class="text-center pt-2">
+                          <span class="text-[9px] font-mono-code text-slate-600 uppercase">Live Interactive Demo</span>
+                        </div>
+                      </div>
+
+                      <div class="h-4 bg-slate-950 flex justify-center items-center pb-1">
+                        <div class="w-24 h-1 bg-slate-700 rounded-full"></div>
                       </div>
                     </div>
-                    <img class="phone-anim__frame" src="img/phone-frame.webp" alt="">
                   </div>
                 </div>
 
+                {/* Карточки проектов */}
                 <div class="lg:col-span-6 space-y-6">
                   <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition-all backdrop-blur-sm">
                     <div class="flex items-center gap-3 mb-4">
@@ -636,6 +644,7 @@
               </div>
             </section>
 
+            {/* Контакты и Форма Техподдержки */}
             <section id="contact" class="py-20 border-t border-slate-800/60">
               <div class="max-w-3xl mx-auto">
                 <div class="text-center mb-12">
@@ -719,6 +728,7 @@
 
           </main>
 
+          {/* Модальное окно: TESTER PORTAL / DASHBOARD */}
           {showTesterPortal && (
             <div class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
               <div class="bg-slate-900 border border-slate-800 max-w-2xl w-full rounded-3xl p-6 md:p-8 relative shadow-2xl my-8">
@@ -730,6 +740,7 @@
                 </button>
 
                 {!authenticatedTester ? (
+                  /* ФОРМА АВТОРИЗАЦИИ ТЕСТЕРА */
                   <div class="py-4">
                     <div class="text-center mb-6">
                       <h2 class="text-2xl font-bold text-white mb-1">🔐 Tester Portal Access</h2>
@@ -776,6 +787,7 @@
                     </form>
                   </div>
                 ) : (
+                  /* ЗАЩИЩЕННЫЙ КАБИНЕТ ТЕСТЕРА (ПОСЛЕ ВХОДА) */
                   <div class="space-y-6">
                     <div class="flex items-center justify-between pb-4 border-b border-slate-800">
                       <div>
@@ -790,6 +802,7 @@
                       </button>
                     </div>
 
+                    {/* Раздел Ссылок на Скачивание */}
                     <div class="space-y-3">
                       <h3 class="text-sm font-bold text-white font-mono-code uppercase">// 📲 Exclusive Beta Builds</h3>
                       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -816,8 +829,9 @@
                       </div>
                     </div>
 
+                    {/* Форма отправки баг-репорта с прикреплением файлов */}
                     <div class="space-y-3 pt-2">
-                      <h3 class="text-sm font-bold text-white font-mono-code uppercase">// 🐛 Send Bug Report / Feedback</h3>
+                      <h3 class="text-sm font-bold text-white font-mono-code uppercase">// 🐛 Send Bug Report / Feedback (Formspree Direct)</h3>
                       
                       <form
                         action="https://formspree.io/f/mwlvypbn"
@@ -880,6 +894,7 @@
             </div>
           )}
 
+          {/* Модальное окно: Заявка в Бета-тестеры */}
           {showBetaModal && (
             <div class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
               <div class="bg-slate-900 border border-slate-800 max-w-xl w-full rounded-3xl p-6 md:p-8 relative shadow-2xl my-8">
@@ -982,6 +997,7 @@
             </div>
           )}
 
+          {/* Privacy Policy */}
           {showPrivacy && (
             <div class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
               <div class="bg-slate-900 border border-slate-800 max-w-2xl w-full max-h-[85vh] rounded-3xl p-6 md:p-8 overflow-y-auto relative shadow-2xl">
@@ -991,20 +1007,21 @@
                 >
                   ✕
                 </button>
-                <h2 class="text-2xl font-bold text-white mb-2">Privacy Policy</h2>
-                <div class="text-xs font-mono-code text-cyan-400 mb-6">App: Vodičák SK | Developer: NomaByte Studio</div>
+                <h2 class="text-2xl font-bold text-white mb-2">Zásady ochrany osobných údajov</h2>
+                <div class="text-xs font-mono-code text-cyan-400 mb-6">Aplikácia: Vodičák SK | Vývojár: NomaByte Studio</div>
                 <div class="text-slate-300 text-sm space-y-4 leading-relaxed">
-                  <p>Vodičák SK respects your privacy. We use anonymous authentication via Firebase and store anonymous test progress data.</p>
-                  <p>Third parties (Google AdMob, Firebase Analytics) may collect anonymous data for ads and crash reporting purposes.</p>
-                  <p>Contact: <a href="mailto:nomabyte@gmail.com" class="text-cyan-400">nomabyte@gmail.com</a></p>
+                  <p>Aplikácia Vodičák SK rešpektuje vaše súkromie. Používame anonymnú autentifikáciu cez Firebase Authentication a ukladáme anonymné dáta pokroku v testoch.</p>
+                  <p>Tretie strany (Google AdMob, Firebase Analytics) môžu zhromažďovať anonymné dáta na účely reklamy a analýzy pádu aplikácie.</p>
+                  <p>Kontakt: <a href="mailto:nomabyte@gmail.com" class="text-cyan-400">nomabyte@gmail.com</a></p>
                 </div>
                 <div class="mt-8 text-center">
-                  <button onClick={() => setShowPrivacy(false)} class="px-6 py-2 rounded-xl bg-cyan-500 text-slate-950 font-bold text-xs font-mono-code">Close</button>
+                  <button onClick={() => setShowPrivacy(false)} class="px-6 py-2 rounded-xl bg-cyan-500 text-slate-950 font-bold text-xs font-mono-code">Zavrieť</button>
                 </div>
               </div>
             </div>
           )}
 
+          {/* Footer */}
           <footer class="border-t border-slate-800/80 py-8 bg-[#030406]">
             <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 font-mono-code text-xs text-slate-500">
               <div>© 2026 NomaByte Studio. All rights reserved.</div>
