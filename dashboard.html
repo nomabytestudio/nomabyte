@@ -1,826 +1,521 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NomaByte - Executive Admin & Dev Portal</title>
-    <!-- Tailwind CSS CDN -->
+    <title>NomaByte - Firebase Executive Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#f0f6ff',
-                            100: '#e0edff',
-                            400: '#38bdf8',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            900: '#0c4a6e',
-                        },
-                        slateDark: '#0b0f19',
-                        panelDark: '#111827',
-                        cardDark: '#1e293b'
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0b0f19;
-            color: #f3f4f6;
-        }
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .glass-card {
-            background: rgba(17, 24, 39, 0.6);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #0b0f19;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 9999px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #0284c7;
-        }
+        body { background-color: #0b0f19; color: #f3f4f6; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        .glass { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glass-card { background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.05); }
     </style>
 </head>
-<body class="custom-scrollbar h-screen overflow-hidden antialiased">
+<body class="min-h-screen flex flex-col">
 
-    <!-- Auth View Container -->
-    <div id="authOverlay" class="fixed inset-0 z-50 flex items-center justify-center bg-slateDark/90 backdrop-blur-md">
-        <div class="glass-panel w-full max-w-md p-8 rounded-2xl shadow-2xl border border-slate-700/50">
-            <div class="flex items-center justify-center gap-3 mb-6">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center font-bold text-xl text-white shadow-lg shadow-cyan-500/30">
-                    N
-                </div>
-                <h1 class="text-2xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">NomaByte Portal</h1>
+    <!-- Navbar -->
+    <nav class="glass sticky top-0 z-50 border-b border-gray-800 px-6 py-3 flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-cyan-500/30">N</div>
+            <span class="font-bold text-lg tracking-wide text-white">NomaByte <span class="text-xs px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">Cloud Hub</span></span>
+        </div>
+        
+        <div id="navUserArea" class="hidden flex items-center space-x-4">
+            <div class="flex items-center space-x-3 bg-gray-800/60 px-3 py-1.5 rounded-full border border-gray-700">
+                <img id="navAvatar" class="w-7 h-7 rounded-full object-cover" src="" alt="Avatar">
+                <span id="navUserName" class="text-sm font-medium text-gray-200">User</span>
+                <span id="navUserBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 font-semibold uppercase">Role</span>
             </div>
+            <button onclick="logout()" class="text-gray-400 hover:text-red-400 text-sm transition"><i class="fa-solid fa-right-from-bracket"></i> Выход</button>
+        </div>
+    </nav>
 
-            <!-- Auth Tabs -->
-            <div class="flex p-1 bg-slate-900/80 rounded-xl mb-6 border border-slate-800">
-                <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-2 text-sm font-medium rounded-lg transition-all text-white bg-brand-600 shadow-md">Sign In</button>
-                <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="flex-1 py-2 text-sm font-medium rounded-lg transition-all text-slate-400 hover:text-white">Register</button>
+    <!-- AUTH CONTAINER -->
+    <div id="authContainer" class="flex-1 flex items-center justify-center p-4">
+        <div class="glass w-full max-w-md p-8 rounded-2xl shadow-2xl relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl"></div>
+            
+            <div class="flex border-b border-gray-700 mb-6">
+                <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-3 text-center font-semibold text-cyan-400 border-b-2 border-cyan-400 transition">Вход</button>
+                <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="flex-1 py-3 text-center font-semibold text-gray-400 hover:text-white transition">Регистрация</button>
             </div>
 
             <!-- Login Form -->
-            <form id="loginForm" onsubmit="handleAuthSubmit(event, 'login')" class="space-y-4">
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1.5">Email Address</label>
-                    <div class="relative">
-                        <i class="fa-solid fa-envelope absolute left-3.5 top-3.5 text-slate-500 text-sm"></i>
-                        <input type="email" id="loginEmail" required value="admin@nomabyte.sk" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500 transition-colors" placeholder="user@nomabyte.com">
-                    </div>
+                    <label class="text-xs text-gray-400 mb-1 block">Email</label>
+                    <input type="email" id="loginEmail" required class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-cyan-500 outline-none">
                 </div>
-
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1.5">Password</label>
-                    <div class="relative">
-                        <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-slate-500 text-sm"></i>
-                        <input type="password" id="loginPassword" required value="password123" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500 transition-colors" placeholder="••••••••">
-                    </div>
+                    <label class="text-xs text-gray-400 mb-1 block">Пароль</label>
+                    <input type="password" id="loginPassword" required class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-cyan-500 outline-none">
                 </div>
-
-                <div class="flex items-center justify-between text-xs text-slate-400">
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" id="rememberMe" checked class="rounded bg-slate-900 border-slate-700 text-brand-600 focus:ring-brand-500">
-                        <span>Remember credentials</span>
-                    </label>
-                    <a href="#" onclick="showToast('Password reset link sent to registered email.')" class="text-brand-400 hover:underline">Forgot password?</a>
-                </div>
-
-                <button type="submit" class="w-full py-3 bg-gradient-to-r from-brand-500 to-blue-600 hover:from-brand-600 hover:to-blue-700 text-white font-semibold rounded-xl text-sm shadow-lg shadow-brand-500/25 transition-all">
-                    Access Console <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
-                </button>
+                <button type="submit" id="loginSubmitBtn" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-2.5 rounded-lg transition shadow-lg shadow-cyan-600/30">Войти через Firebase</button>
             </form>
 
             <!-- Register Form -->
-            <form id="registerForm" onsubmit="handleAuthSubmit(event, 'register')" class="space-y-4 hidden">
+            <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-4 hidden">
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1.5">Full Name</label>
-                    <input type="text" id="regName" required class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500" placeholder="Alex Morgan">
+                    <label class="text-xs text-gray-400 mb-1 block">Имя и Фамилия</label>
+                    <input type="text" id="regName" required class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-cyan-500 outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1.5">Email Address</label>
-                    <input type="email" id="regEmail" required class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500" placeholder="alex@nomabyte.sk">
+                    <label class="text-xs text-gray-400 mb-1 block">Email</label>
+                    <input type="email" id="regEmail" required class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-cyan-500 outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1.5">Role / Position</label>
-                    <select id="regRole" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
-                        <option value="Lead Developer">Lead Developer</option>
-                        <option value="QA Engineer & Tester">QA Engineer & Tester</option>
-                        <option value="Product Manager">Product Manager</option>
-                        <option value="UI/UX Designer">UI/UX Designer</option>
-                    </select>
+                    <label class="text-xs text-gray-400 mb-1 block">Пароль</label>
+                    <input type="password" id="regPassword" required class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-cyan-500 outline-none">
                 </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1.5">Password</label>
-                    <input type="password" id="regPassword" required class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500" placeholder="••••••••">
-                </div>
-
-                <button type="submit" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-semibold rounded-xl text-sm shadow-lg shadow-emerald-500/25 transition-all">
-                    Create Workspace Account
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Main Dashboard Layout -->
-    <div class="flex h-full">
-
-        <!-- Sidebar Navigation -->
-        <aside class="w-64 glass-panel border-r border-slate-800 flex flex-col justify-between hidden md:flex">
-            <div>
-                <!-- Brand Header -->
-                <div class="p-6 flex items-center gap-3 border-b border-slate-800/80">
-                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center font-bold text-lg text-white shadow-md shadow-cyan-500/30">
-                        N
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs text-gray-400 mb-1 block">Страна</label>
+                        <select id="regCountry" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-gray-300 outline-none">
+                            <option value="🇸🇰 Словакия">🇸🇰 Словакия</option>
+                            <option value="🇺🇦 Украина">🇺🇦 Украина</option>
+                            <option value="🇷🇺 Россия">🇷🇺 Россия</option>
+                            <option value="🇷🇴 Румыния">🇷🇴 Румыния</option>
+                            <option value="🇨🇿 Чехия">🇨🇿 Чехия</option>
+                            <option value="🇬🇪 Грузия">🇬🇪 Грузия</option>
+                            <option value="🇺🇿 Узбекистан">🇺🇿 Узбекистан</option>
+                            <option value="🇰🇿 Казахстан">🇰🇿 Казахстан</option>
+                        </select>
                     </div>
                     <div>
-                        <h2 class="font-bold text-white tracking-wide text-sm">NomaByte</h2>
-                        <span class="text-[10px] uppercase font-semibold text-cyan-400 tracking-wider">Executive Suite</span>
+                        <label class="text-xs text-gray-400 mb-1 block">Язык UI</label>
+                        <select id="regLang" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-gray-300 outline-none">
+                            <option value="ru">Русский</option>
+                            <option value="en">English</option>
+                            <option value="sk">Slovenčina</option>
+                            <option value="uk">Українська</option>
+                            <option value="ro">Română</option>
+                            <option value="ka">ქართული</option>
+                            <option value="uz">O'zbek</option>
+                            <option value="kk">Қазақша</option>
+                        </select>
                     </div>
                 </div>
-
-                <!-- Nav Menu -->
-                <nav class="p-4 space-y-1 text-sm font-medium">
-                    <a href="#" onclick="switchView('dashboard')" id="nav-dashboard" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-white bg-brand-600/30 border border-brand-500/30 transition-all">
-                        <i class="fa-solid fa-chart-pie text-cyan-400 w-5"></i>
-                        <span>Overview</span>
-                    </a>
-                    <a href="#" onclick="switchView('apps')" id="nav-apps" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all">
-                        <i class="fa-solid fa-cubes text-slate-400 w-5"></i>
-                        <span>Apps & Testing</span>
-                    </a>
-                    <a href="#" onclick="switchView('profile')" id="nav-profile" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all">
-                        <i class="fa-solid fa-id-card text-slate-400 w-5"></i>
-                        <span>Profile & Settings</span>
-                    </a>
-                    <a href="#" onclick="openBugModal()" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-amber-400 hover:bg-amber-500/10 border border-amber-500/20 transition-all mt-4">
-                        <i class="fa-solid fa-bug text-amber-400 w-5"></i>
-                        <span>Report Bug</span>
-                    </a>
-                </nav>
-            </div>
-
-            <!-- User Quick Card Bottom -->
-            <div class="p-4 border-t border-slate-800/80">
-                <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900/60 border border-slate-800">
-                    <div class="flex items-center gap-3 min-w-0">
-                        <img id="sidebarAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Avatar" class="w-9 h-9 rounded-lg object-cover ring-2 ring-brand-500/50 flex-shrink-0">
-                        <div class="min-w-0">
-                            <p id="sidebarUserName" class="text-xs font-semibold text-white truncate">Sasha Vance</p>
-                            <p id="sidebarUserRole" class="text-[10px] text-slate-400 truncate">Lead Administrator</p>
-                        </div>
-                    </div>
-                    <button onclick="handleLogout()" title="Log Out" class="text-slate-400 hover:text-rose-400 p-2 transition-colors">
-                        <i class="fa-solid fa-right-from-bracket text-xs"></i>
-                    </button>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Content Body -->
-        <main class="flex-1 flex flex-col h-full overflow-hidden bg-slateDark">
-            
-            <!-- Top Navigation Header -->
-            <header class="h-16 border-b border-slate-800 glass-panel px-6 flex items-center justify-between z-10">
-                <div class="flex items-center gap-4">
-                    <button onclick="toggleMobileSidebar()" class="md:hidden text-slate-400 hover:text-white">
-                        <i class="fa-solid fa-bars text-lg"></i>
-                    </button>
-                    <h3 id="currentViewTitle" class="text-lg font-bold text-white tracking-tight">Executive Dashboard</h3>
-                </div>
-
-                <div class="flex items-center gap-4">
-                    <!-- Global Search -->
-                    <div class="relative hidden sm:block w-64">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
-                        <input type="text" placeholder="Search modules, apps..." class="w-full bg-slate-900/80 border border-slate-700/80 rounded-lg pl-9 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500">
-                    </div>
-
-                    <!-- Direct Telegram Bug Action Button -->
-                    <button onclick="openBugModal()" class="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-medium text-xs px-3.5 py-2 rounded-lg shadow-md shadow-amber-500/20 transition-all">
-                        <i class="fa-paper-plane fa-solid text-xs"></i>
-                        <span class="hidden sm:inline">Submit Bug</span>
-                    </button>
-
-                    <!-- System Status Indicator -->
-                    <div class="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full text-xs text-emerald-400">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span class="font-medium hidden sm:inline">Telegram Bot API Active</span>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Scrollable View Content -->
-            <div class="flex-1 overflow-y-auto p-6 custom-scrollbar">
-
-                <!-- 1. DASHBOARD OVERVIEW VIEW -->
-                <section id="view-dashboard" class="space-y-6">
-                    
-                    <!-- Top Metrics Cards -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div class="glass-card p-5 rounded-2xl relative overflow-hidden border-l-4 border-l-cyan-500">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Active Applications</p>
-                                    <h4 class="text-2xl font-bold text-white mt-1">4 Live</h4>
-                                </div>
-                                <div class="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center">
-                                    <i class="fa-solid fa-mobile-screen-button text-lg"></i>
-                                </div>
-                            </div>
-                            <p class="text-xs text-slate-400 mt-3"><span class="text-emerald-400 font-semibold"><i class="fa-solid fa-arrow-up"></i> 100%</span> system uptime</p>
-                        </div>
-
-                        <div class="glass-card p-5 rounded-2xl relative overflow-hidden border-l-4 border-l-indigo-500">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Quiz & Lessons</p>
-                                    <h4 class="text-2xl font-bold text-white mt-1">250 Modules</h4>
-                                </div>
-                                <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center">
-                                    <i class="fa-solid fa-graduation-cap text-lg"></i>
-                                </div>
-                            </div>
-                            <p class="text-xs text-slate-400 mt-3"><span class="text-indigo-400 font-semibold">A1 - C1</span> Slovak language roadmap</p>
-                        </div>
-
-                        <div class="glass-card p-5 rounded-2xl relative overflow-hidden border-l-4 border-l-emerald-500">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Supported Languages</p>
-                                    <h4 class="text-2xl font-bold text-white mt-1">8 Locales</h4>
-                                </div>
-                                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
-                                    <i class="fa-solid fa-language text-lg"></i>
-                                </div>
-                            </div>
-                            <p class="text-xs text-slate-400 mt-3">RU, EN, UK, CS, RO, KA, UZ, KK</p>
-                        </div>
-
-                        <div class="glass-card p-5 rounded-2xl relative overflow-hidden border-l-4 border-l-amber-500">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Telegram Bot API</p>
-                                    <h4 class="text-2xl font-bold text-white mt-1">Connected</h4>
-                                </div>
-                                <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
-                                    <i class="fa-solid fa-paper-plane text-lg"></i>
-                                </div>
-                            </div>
-                            <p class="text-xs text-slate-400 mt-3"><span class="text-amber-400 font-semibold">Bot ID:</span> 9276816295</p>
-                        </div>
-                    </div>
-
-                    <!-- Middle Grid: App Hub Quick Links & System Health -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        
-                        <!-- Main Ecosystem Apps -->
-                        <div class="lg:col-span-2 glass-panel p-6 rounded-2xl">
-                            <div class="flex items-center justify-between mb-4">
-                                <h4 class="text-base font-bold text-white flex items-center gap-2">
-                                    <i class="fa-solid fa-rocket text-cyan-400"></i> Active Project Ecosystem
-                                </h4>
-                                <button onclick="switchView('apps')" class="text-xs text-brand-400 hover:underline">View All Apps</button>
-                            </div>
-
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <!-- Azbuka SK -->
-                                <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-cyan-500/40 transition-all">
-                                    <div class="flex items-start justify-between">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold">
-                                                AZ
-                                            </div>
-                                            <div>
-                                                <h5 class="font-bold text-white text-sm">Azbuka SK</h5>
-                                                <p class="text-xs text-slate-400">Slovak Learning (250 Lessons)</p>
-                                            </div>
-                                        </div>
-                                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/20 text-emerald-400">v2.4 Active</span>
-                                    </div>
-                                    <div class="mt-4 flex items-center justify-between text-xs text-slate-400 pt-3 border-t border-slate-800/80">
-                                        <span>Target: A1-C1</span>
-                                        <button onclick="showToast('Launching Azbuka SK Test Suite...')" class="text-cyan-400 hover:text-cyan-300 font-medium">Open Suite &rarr;</button>
-                                    </div>
-                                </div>
-
-                                <!-- Vodičák SK -->
-                                <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-blue-500/40 transition-all">
-                                    <div class="flex items-start justify-between">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold">
-                                                VD
-                                            </div>
-                                            <div>
-                                                <h5 class="font-bold text-white text-sm">Vodičák SK</h5>
-                                                <p class="text-xs text-slate-400">Driving License Prep</p>
-                                            </div>
-                                        </div>
-                                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/20 text-emerald-400">v1.9 Active</span>
-                                    </div>
-                                    <div class="mt-4 flex items-center justify-between text-xs text-slate-400 pt-3 border-t border-slate-800/80">
-                                        <span>Tests & Rules</span>
-                                        <button onclick="showToast('Opening Vodičák SK Portal...')" class="text-cyan-400 hover:text-cyan-300 font-medium">Open Suite &rarr;</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Quick Bug Status Panel -->
-                        <div class="glass-panel p-6 rounded-2xl flex flex-col justify-between">
-                            <div>
-                                <h4 class="text-base font-bold text-white mb-2 flex items-center gap-2">
-                                    <i class="fa-solid fa-shield-halved text-amber-400"></i> Telegram Dispatcher
-                                </h4>
-                                <p class="text-xs text-slate-400 leading-relaxed mb-4">
-                                    Direct integration with Bot API. Telegram handles attachments, log dumps, and immediate screenshots.
-                                </p>
-                                <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-xs space-y-2">
-                                    <div class="flex justify-between">
-                                        <span class="text-slate-400">Bot Endpoint:</span>
-                                        <span class="text-white font-mono">@NomaByteBot</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-slate-400">Target Chat:</span>
-                                        <span class="text-amber-400 font-mono">5044411049</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-slate-400">Upload Limit:</span>
-                                        <span class="text-emerald-400 font-semibold">Unlimited (Photos/Docs)</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <button onclick="openBugModal()" class="w-full mt-4 py-2.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 border border-amber-500/30 font-semibold text-xs rounded-xl transition-all">
-                                Launch Telegram Bug Reporter
-                            </button>
-                        </div>
-
-                    </div>
-                </section>
-
-                <!-- 2. APPS & TESTING SUITE VIEW -->
-                <section id="view-apps" class="space-y-6 hidden">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h3 class="text-xl font-bold text-white">Applications & Interactive Test Hub</h3>
-                            <p class="text-xs text-slate-400">Manage NomaByte mobile projects, test suites, and localization builds.</p>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        
-                        <!-- App Card 1: Azbuka SK -->
-                        <div class="glass-panel p-6 rounded-2xl border border-slate-800 relative flex flex-col justify-between">
-                            <div>
-                                <div class="flex justify-between items-start mb-4">
-                                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-cyan-500/20">
-                                        <i class="fa-solid fa-book-open"></i>
-                                    </div>
-                                    <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Stable v2.4</span>
-                                </div>
-                                <h4 class="text-lg font-bold text-white">Azbuka SK</h4>
-                                <p class="text-xs text-slate-400 mt-1 leading-relaxed">
-                                    Complete Slovak learning curriculum (250 lessons, levels A1 to C1) with multi-language interface support for 8 languages.
-                                </p>
-                                <div class="mt-4 space-y-2">
-                                    <div class="flex items-center justify-between text-xs">
-                                        <span class="text-slate-400">JSON Database</span>
-                                        <span class="text-cyan-400 font-mono">slovaklessons_database.json</span>
-                                    </div>
-                                    <div class="flex items-center justify-between text-xs">
-                                        <span class="text-slate-400">Supported Languages</span>
-                                        <span class="text-slate-200">RU, EN, UK, CS, RO, KA, UZ, KK</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mt-6 pt-4 border-t border-slate-800 flex gap-2">
-                                <button onclick="showToast('Simulating A1-C1 Test Runner...')" class="flex-1 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-xl border border-slate-700 transition-all">
-                                    Run Test Suite
-                                </button>
-                                <button onclick="openBugModal('Azbuka SK')" class="py-2 px-3 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs font-semibold rounded-xl border border-amber-500/20">
-                                    Report Issue
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- App Card 2: Vodičák SK -->
-                        <div class="glass-panel p-6 rounded-2xl border border-slate-800 relative flex flex-col justify-between">
-                            <div>
-                                <div class="flex justify-between items-start mb-4">
-                                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-indigo-500/20">
-                                        <i class="fa-solid fa-car"></i>
-                                    </div>
-                                    <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Stable v1.9</span>
-                                </div>
-                                <h4 class="text-lg font-bold text-white">Vodičák SK</h4>
-                                <p class="text-xs text-slate-400 mt-1 leading-relaxed">
-                                    Official Slovak driving test preparation app featuring updated traffic sign recognition and timed practice tests.
-                                </p>
-                                <div class="mt-4 space-y-2">
-                                    <div class="flex items-center justify-between text-xs">
-                                        <span class="text-slate-400">Test Pool</span>
-                                        <span class="text-indigo-400 font-mono">1,200 Official Questions</span>
-                                    </div>
-                                    <div class="flex items-center justify-between text-xs">
-                                        <span class="text-slate-400">Exam Mode</span>
-                                        <span class="text-slate-200">Timed / Instant Review</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mt-6 pt-4 border-t border-slate-800 flex gap-2">
-                                <button onclick="showToast('Launching Vodičák Exam Simulator...')" class="flex-1 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-xl border border-slate-700 transition-all">
-                                    Run Test Suite
-                                </button>
-                                <button onclick="openBugModal('Vodičák SK')" class="py-2 px-3 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs font-semibold rounded-xl border border-amber-500/20">
-                                    Report Issue
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- App Card 3: NomaByte Admin Console -->
-                        <div class="glass-panel p-6 rounded-2xl border border-slate-800 relative flex flex-col justify-between">
-                            <div>
-                                <div class="flex justify-between items-start mb-4">
-                                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-rose-600 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-amber-500/20">
-                                        <i class="fa-solid fa-sliders"></i>
-                                    </div>
-                                    <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">Admin Core</span>
-                                </div>
-                                <h4 class="text-lg font-bold text-white">Executive Control Hub</h4>
-                                <p class="text-xs text-slate-400 mt-1 leading-relaxed">
-                                    Internal dashboard for team authentication, profile management, and direct integration with Telegram bug services.
-                                </p>
-                                <div class="mt-4 space-y-2">
-                                    <div class="flex items-center justify-between text-xs">
-                                        <span class="text-slate-400">Telegram Bot Token</span>
-                                        <span class="text-amber-400 font-mono">92768...lAC</span>
-                                    </div>
-                                    <div class="flex items-center justify-between text-xs">
-                                        <span class="text-slate-400">Target Chat ID</span>
-                                        <span class="text-slate-200">5044411049</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mt-6 pt-4 border-t border-slate-800 flex gap-2">
-                                <button onclick="switchView('profile')" class="flex-1 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-xl border border-slate-700 transition-all">
-                                    Profile Settings
-                                </button>
-                                <button onclick="openBugModal('Admin Portal')" class="py-2 px-3 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs font-semibold rounded-xl border border-amber-500/20">
-                                    Report Issue
-                                </button>
-                            </div>
-                        </div>
-
-                    </div>
-                </section>
-
-                <!-- 3. USER PROFILE & SETTINGS VIEW -->
-                <section id="view-profile" class="space-y-6 hidden">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h3 class="text-xl font-bold text-white">User Profile & Account Settings</h3>
-                            <p class="text-xs text-slate-400">Update your team credentials, role position, country, and security options.</p>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        
-                        <!-- Left Avatar & Summary Card -->
-                        <div class="glass-panel p-6 rounded-2xl text-center flex flex-col items-center justify-center">
-                            <div class="relative group">
-                                <img id="profileCardAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Profile Avatar" class="w-24 h-24 rounded-2xl object-cover ring-4 ring-brand-500/40 shadow-xl">
-                                <button onclick="showToast('Avatar selection updated.')" class="absolute bottom-0 right-0 bg-brand-600 text-white p-2 rounded-xl text-xs shadow-lg hover:bg-brand-500 transition-all">
-                                    <i class="fa-solid fa-camera"></i>
-                                </button>
-                            </div>
-                            <h4 id="profileCardName" class="text-lg font-bold text-white mt-4">Sasha Vance</h4>
-                            <p id="profileCardRole" class="text-xs font-medium text-cyan-400">Lead Administrator</p>
-                            <p id="profileCardCountry" class="text-xs text-slate-400 mt-1"><i class="fa-solid fa-location-dot text-rose-400 mr-1"></i> Slovakia (SK)</p>
-
-                            <div class="w-full mt-6 pt-6 border-t border-slate-800 space-y-2 text-left">
-                                <div class="flex items-center justify-between text-xs">
-                                    <span class="text-slate-400">Email:</span>
-                                    <span id="profileCardEmail" class="text-white font-medium">admin@nomabyte.sk</span>
-                                </div>
-                                <div class="flex items-center justify-between text-xs">
-                                    <span class="text-slate-400">Access Level:</span>
-                                    <span class="px-2 py-0.5 rounded bg-brand-500/20 text-brand-400 font-semibold">Executive Admin</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Right Settings Edit Form -->
-                        <div class="lg:col-span-2 glass-panel p-6 rounded-2xl">
-                            <form onsubmit="saveProfileSettings(event)" class="space-y-4">
-                                <h4 class="text-base font-bold text-white mb-4 flex items-center gap-2 border-b border-slate-800 pb-3">
-                                    <i class="fa-solid fa-user-gear text-brand-400"></i> Personal & Professional Details
-                                </h4>
-
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Full Name</label>
-                                        <input type="text" id="editName" value="Sasha Vance" required class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Country</label>
-                                        <input type="text" id="editCountry" value="Slovakia" required class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
-                                    </div>
-                                </div>
-
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Job Title / Role</label>
-                                        <input type="text" id="editRole" value="Lead Administrator" required class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Email Address</label>
-                                        <input type="email" id="editEmail" value="admin@nomabyte.sk" required class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
-                                    </div>
-                                </div>
-
-                                <div class="pt-4 border-t border-slate-800 flex justify-end">
-                                    <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-brand-500 to-blue-600 hover:from-brand-600 hover:to-blue-700 text-white font-semibold rounded-xl text-sm shadow-lg shadow-brand-500/20 transition-all">
-                                        Save Changes
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-
-                    </div>
-                </section>
-
-            </div>
-        </main>
-    </div>
-
-    <!-- Telegram Bug Report Modal -->
-    <div id="bugModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slateDark/80 backdrop-blur-md hidden">
-        <div class="glass-panel w-full max-w-lg p-6 rounded-2xl shadow-2xl border border-slate-700 relative">
-            <button onclick="closeBugModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-
-            <div class="flex items-center gap-3 mb-4">
-                <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-lg">
-                    <i class="fa-solid fa-bug"></i>
-                </div>
-                <div>
-                    <h3 class="text-lg font-bold text-white">Telegram Bug Dispatcher</h3>
-                    <p class="text-xs text-slate-400">Direct transmission to bot <span class="text-cyan-400 font-mono">@NomaByteBot</span></p>
-                </div>
-            </div>
-
-            <form id="telegramBugForm" onsubmit="handleTelegramBugSubmit(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Module / Context</label>
-                    <input type="text" id="bugModuleInput" value="Azbuka SK App" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Bug Description & Steps</label>
-                    <textarea id="bugDescription" required placeholder="Describe what went wrong, error message, or unexpected behavior..." class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-500 h-28 resize-none"></textarea>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Attach Screenshot / File (Optional)</label>
-                    <input type="file" id="bugScreenshot" accept="image/*" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-amber-400 hover:file:bg-slate-700 cursor-pointer">
-                </div>
-
-                <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 text-[11px] text-slate-400 flex items-center gap-2">
-                    <i class="fa-solid fa-shield text-emerald-400"></i>
-                    <span>Target Chat ID: <strong class="text-white font-mono">5044411049</strong> (No file limits)</span>
-                </div>
-
-                <div class="flex justify-end gap-3 pt-2">
-                    <button type="button" onclick="closeBugModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl">Cancel</button>
-                    <button type="submit" id="bugSubmitBtn" class="px-6 py-2 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-semibold text-xs rounded-xl shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2">
-                        <span>Send to Telegram</span>
-                        <i class="fa-solid fa-paper-plane text-xs"></i>
-                    </button>
-                </div>
+                <button type="submit" id="regSubmitBtn" class="w-full bg-green-600 hover:bg-green-500 text-white font-semibold py-2.5 rounded-lg transition shadow-lg shadow-green-600/30">Зарегистрироваться</button>
             </form>
+            <div id="authStatus" class="mt-3 text-center text-xs font-medium"></div>
         </div>
     </div>
 
-    <!-- Toast Notification Widget -->
-    <div id="toastNotification" class="fixed bottom-6 right-6 z-50 bg-slate-900 text-white border border-slate-700 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 transform translate-y-20 opacity-0 transition-all duration-300">
-        <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
-        <span id="toastText" class="text-xs font-medium">Notification message</span>
+    <!-- MAIN DASHBOARD APP CONTAINER -->
+    <div id="appContainer" class="hidden flex-1 p-6 max-w-7xl mx-auto w-full space-y-6">
+        
+        <!-- Header Controls -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-800 pb-4">
+            <div>
+                <h1 class="text-2xl font-bold text-white">Рабочая Панель NomaByte</h1>
+                <p class="text-sm text-gray-400">Связь с облаком Firebase Firestore (`azbuka-sk`)</p>
+            </div>
+            <div class="flex space-x-2">
+                <button onclick="switchTab('profile')" class="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-sm font-medium border border-gray-700 transition"><i class="fa-solid fa-user-gear mr-2"></i>Профиль</button>
+                <button onclick="switchTab('apps')" class="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-sm font-medium border border-gray-700 transition"><i class="fa-solid fa-mobile-screen mr-2"></i>Приложения</button>
+                <button onclick="switchTab('bugs')" class="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-sm font-medium border border-gray-700 transition"><i class="fa-solid fa-bug mr-2 text-red-400"></i>Баг-Трекер</button>
+                <button id="adminTabBtn" onclick="switchTab('admin')" class="hidden px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-sm font-semibold text-white shadow-lg transition"><i class="fa-solid fa-shield-halved mr-2"></i>Админка</button>
+            </div>
+        </div>
+
+        <!-- TAB 1: PROFILE SETTINGS -->
+        <div id="tabProfile" class="tab-content space-y-6">
+            <div class="glass p-6 rounded-2xl max-w-2xl mx-auto space-y-6">
+                <h2 class="text-xl font-bold text-cyan-400 border-b border-gray-800 pb-3">Настройки Профиля в Cloud Firestore</h2>
+                
+                <div class="flex items-center space-x-6">
+                    <img id="profileAvatarPreview" class="w-20 h-20 rounded-full object-cover border-2 border-cyan-500 shadow-lg" src="" alt="Avatar">
+                    <div class="space-y-2 flex-1">
+                        <label class="text-xs text-gray-400 block">Ссылка на фото/аватарку (URL)</label>
+                        <input type="text" id="profAvatarUrl" oninput="updateAvatarPreview()" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-1.5 text-sm text-gray-300 focus:border-cyan-500 outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs text-gray-400 mb-1 block">Имя</label>
+                        <input type="text" id="profName" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400 mb-1 block">Должность (Назначает Главный Админ)</label>
+                        <input type="text" id="profRole" disabled class="w-full bg-gray-800/50 border border-gray-800 text-gray-400 rounded-lg px-3 py-2 text-sm cursor-not-allowed">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400 mb-1 block">Страна</label>
+                        <select id="profCountry" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200">
+                            <option value="🇸🇰 Словакия">🇸🇰 Словакия</option>
+                            <option value="🇺🇦 Украина">🇺🇦 Украина</option>
+                            <option value="🇷🇺 Россия">🇷🇺 Россия</option>
+                            <option value="🇷🇴 Румыния">🇷🇴 Румыния</option>
+                            <option value="🇨🇿 Чехия">🇨🇿 Чехия</option>
+                            <option value="🇬🇪 Грузия">🇬🇪 Грузия</option>
+                            <option value="🇺🇿 Узбекистан">🇺🇿 Узбекистан</option>
+                            <option value="🇰🇿 Казахстан">🇰🇿 Казахстан</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400 mb-1 block">Язык Интерфейса Приложения</label>
+                        <select id="profLang" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200">
+                            <option value="ru">Русский 🇷🇺</option>
+                            <option value="en">English 🇬🇧</option>
+                            <option value="sk">Slovenčina 🇸🇰</option>
+                            <option value="uk">Українська 🇺🇦</option>
+                            <option value="ro">Română 🇷🇴</option>
+                            <option value="ka">ქართული 🇬🇪</option>
+                            <option value="uz">O'zbek 🇺🇿</option>
+                            <option value="kk">Қазақша 🇰🇿</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="saveProfile()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-2.5 rounded-lg transition">Сохранить в Firebase</button>
+            </div>
+        </div>
+
+        <!-- TAB 2: APPS -->
+        <div id="tabApps" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass-card p-6 rounded-2xl border border-gray-800">
+                    <h3 class="text-lg font-bold text-white mb-1">Azbuka SK (SlovoGo)</h3>
+                    <p class="text-sm text-gray-400 mb-4">250 уроков A1-C1 на 8 языках интерфейса.</p>
+                </div>
+                <div class="glass-card p-6 rounded-2xl border border-gray-800">
+                    <h3 class="text-lg font-bold text-white mb-1">Vodičák SK</h3>
+                    <p class="text-sm text-gray-400 mb-4">Симулятор экзаменационных тестов словацкой автошколы.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: TELEGRAM BUGS -->
+        <div id="tabBugs" class="tab-content hidden">
+            <div class="glass p-6 rounded-2xl max-w-xl mx-auto space-y-4">
+                <h2 class="text-lg font-bold text-white border-b border-gray-800 pb-3">Отправка Отчета о Баге</h2>
+                <form id="telegramBugForm" onsubmit="sendTelegramBug(event)" class="space-y-4">
+                    <textarea id="bugText" required rows="4" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm text-gray-200 outline-none" placeholder="Что сломалось?"></textarea>
+                    <input type="file" id="bugFile" accept="image/*" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-sm text-gray-400">
+                    <button type="submit" id="bugSubmitBtn" class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-semibold py-2.5 rounded-lg shadow-lg">Отправить в Telegram (@NomaByteBot)</button>
+                </form>
+                <div id="bugStatus" class="text-center text-sm font-medium"></div>
+            </div>
+        </div>
+
+        <!-- TAB 4: ADMIN PANEL -->
+        <div id="tabAdmin" class="tab-content hidden space-y-6">
+            <div class="glass p-6 rounded-2xl border border-purple-500/30 space-y-6">
+                <h2 class="text-xl font-bold text-purple-400 border-b border-gray-800 pb-4">Управление Пользователями Firebase</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-gray-300">
+                        <thead class="bg-gray-900/80 text-xs uppercase text-gray-400">
+                            <tr>
+                                <th class="p-3">Пользователь</th>
+                                <th class="p-3">Email</th>
+                                <th class="p-3">Страна / Язык</th>
+                                <th class="p-3">Должность</th>
+                                <th class="p-3">Статус</th>
+                                <th class="p-3 text-right">Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminUserTable" class="divide-y divide-gray-800"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <!-- JavaScript Logic -->
-    <script>
-        // User Profile State
-        let currentUser = {
-            name: "Sasha Vance",
-            email: "admin@nomabyte.sk",
-            role: "Lead Administrator",
-            country: "Slovakia",
-            avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
+    <!-- FIREBASE SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, getDocs, collection, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // КЛЮЧИ ИЗ ТВОЕГО СКРИНШОТА
+        const firebaseConfig = {
+            apiKey: "AIzaSyBOglBddyg2fgnXk1nDwaSvpzWF9NyESs",
+            authDomain: "azbuka-sk.firebaseapp.com",
+            projectId: "azbuka-sk",
+            storageBucket: "azbuka-sk.firebasestorage.app",
+            messagingSenderId: "240293624050",
+            appId: "1:240293624050:web:88cd0ed0c2d13c3d63b86b",
+            measurementId: "G-WRR14PN6XH"
         };
 
-        // Telegram Bot Credentials
-        const TELEGRAM_BOT_TOKEN = '9276816295:AAHCW8XsdT2FMHT2zt_h_qs77pNFE_f4lAC';
-        const TELEGRAM_CHAT_ID = '5044411049';
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        // Initialize UI
-        window.onload = function() {
-            updateUserUI();
-        };
+        const BOT_TOKEN = '9276816295:AAHCW8XsdT2FMHT2zt_h_qs77pNFE_f4lAC';
+        const CHAT_ID = '5044411049';
 
-        // Switch Auth Tab (Login/Register)
-        function switchAuthTab(tab) {
-            const loginForm = document.getElementById('loginForm');
-            const regForm = document.getElementById('registerForm');
-            const loginBtn = document.getElementById('tabLoginBtn');
-            const regBtn = document.getElementById('tabRegisterBtn');
+        window.currentFirebaseUser = null;
+        window.currentUserProfile = null;
 
-            if (tab === 'login') {
-                loginForm.classList.remove('hidden');
-                regForm.classList.add('hidden');
-                loginBtn.className = 'flex-1 py-2 text-sm font-medium rounded-lg transition-all text-white bg-brand-600 shadow-md';
-                regBtn.className = 'flex-1 py-2 text-sm font-medium rounded-lg transition-all text-slate-400 hover:text-white';
+        // Отслеживание входа
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                window.currentFirebaseUser = user;
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (userDoc.exists()) {
+                    window.currentUserProfile = userDoc.data();
+                    if (window.currentUserProfile.isBlocked) {
+                        alert("⚠️ Ваш аккаунт заблокирован Администратором!");
+                        await signOut(auth);
+                        showAuth();
+                        return;
+                    }
+                    showApp();
+                }
             } else {
-                loginForm.classList.add('hidden');
-                regForm.classList.remove('hidden');
-                regBtn.className = 'flex-1 py-2 text-sm font-medium rounded-lg transition-all text-white bg-emerald-600 shadow-md';
-                loginBtn.className = 'flex-1 py-2 text-sm font-medium rounded-lg transition-all text-slate-400 hover:text-white';
+                window.currentFirebaseUser = null;
+                window.currentUserProfile = null;
+                showAuth();
             }
-        }
+        });
 
-        // Handle Login / Registration
-        function handleAuthSubmit(event, mode) {
-            event.preventDefault();
-            if (mode === 'login') {
-                currentUser.email = document.getElementById('loginEmail').value;
-            } else {
-                currentUser.name = document.getElementById('regName').value;
-                currentUser.email = document.getElementById('regEmail').value;
-                currentUser.role = document.getElementById('regRole').value;
-            }
-            updateUserUI();
-            document.getElementById('authOverlay').classList.add('hidden');
-            showToast(`Welcome back, ${currentUser.name}!`);
-        }
-
-        // Logout action
-        function handleLogout() {
-            document.getElementById('authOverlay').classList.remove('hidden');
-            showToast('Logged out of session.');
-        }
-
-        // Update User UI Sync
-        function updateUserUI() {
-            document.getElementById('sidebarUserName').textContent = currentUser.name;
-            document.getElementById('sidebarUserRole').textContent = currentUser.role;
-            document.getElementById('sidebarAvatar').src = currentUser.avatar;
-
-            document.getElementById('profileCardName').textContent = currentUser.name;
-            document.getElementById('profileCardRole').textContent = currentUser.role;
-            document.getElementById('profileCardEmail').textContent = currentUser.email;
-            document.getElementById('profileCardCountry').innerHTML = `<i class="fa-solid fa-location-dot text-rose-400 mr-1"></i> ${currentUser.country}`;
-            document.getElementById('profileCardAvatar').src = currentUser.avatar;
-
-            document.getElementById('editName').value = currentUser.name;
-            document.getElementById('editEmail').value = currentUser.email;
-            document.getElementById('editRole').value = currentUser.role;
-            document.getElementById('editCountry').value = currentUser.country;
-        }
-
-        // Save Profile Form
-        function saveProfileSettings(e) {
+        // Вход
+        window.handleLogin = async function(e) {
             e.preventDefault();
-            currentUser.name = document.getElementById('editName').value;
-            currentUser.email = document.getElementById('editEmail').value;
-            currentUser.role = document.getElementById('editRole').value;
-            currentUser.country = document.getElementById('editCountry').value;
-            
-            updateUserUI();
-            showToast('Profile settings saved successfully!');
-        }
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPassword').value;
+            const btn = document.getElementById('loginSubmitBtn');
+            const status = document.getElementById('authStatus');
 
-        // Navigation Switcher
-        function switchView(viewName) {
-            document.querySelectorAll('section[id^="view-"]').forEach(sec => sec.classList.add('hidden'));
-            document.getElementById(`view-${viewName}`).classList.remove('hidden');
-
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.className = 'nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all';
-            });
-            const activeNav = document.getElementById(`nav-${viewName}`);
-            if (activeNav) {
-                activeNav.className = 'nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-white bg-brand-600/30 border border-brand-500/30 transition-all';
-            }
-
-            const titles = {
-                'dashboard': 'Executive Dashboard',
-                'apps': 'Applications & Testing Hub',
-                'profile': 'User Profile & Settings'
-            };
-            document.getElementById('currentViewTitle').textContent = titles[viewName] || 'Dashboard';
-        }
-
-        // Telegram Bug Modal Handler
-        function openBugModal(moduleName = 'Azbuka SK') {
-            document.getElementById('bugModuleInput').value = moduleName;
-            document.getElementById('bugModal').classList.remove('hidden');
-        }
-
-        function closeBugModal() {
-            document.getElementById('bugModal').classList.add('hidden');
-        }
-
-        // Send Bug Report to Telegram API
-        async function handleTelegramBugSubmit(event) {
-            event.preventDefault();
-            
-            const moduleName = document.getElementById('bugModuleInput').value;
-            const description = document.getElementById('bugDescription').value;
-            const fileInput = document.getElementById('bugScreenshot');
-            const submitBtn = document.getElementById('bugSubmitBtn');
-
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = `<span>Sending...</span> <i class="fa-solid fa-spinner animate-spin text-xs"></i>`;
-
-            const fullCaption = `🐛 *NomaByte Bug Report*\n\n👤 *User:* ${currentUser.name} (${currentUser.role})\n📍 *Module:* ${moduleName}\n🌍 *Country:* ${currentUser.country}\n\n📝 *Description:*\n${description}`;
+            btn.disabled = true;
+            status.textContent = "Проверка Firebase...";
 
             try {
-                let response;
+                await signInWithEmailAndPassword(auth, email, pass);
+                status.textContent = "";
+            } catch (err) {
+                status.style.color = "#f87171";
+                status.textContent = "❌ Ошибка входа: " + err.message;
+            } finally {
+                btn.disabled = false;
+            }
+        };
 
+        // Регистрация
+        window.handleRegister = async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('regEmail').value;
+            const pass = document.getElementById('regPassword').value;
+            const name = document.getElementById('regName').value;
+            const country = document.getElementById('regCountry').value;
+            const lang = document.getElementById('regLang').value;
+            const btn = document.getElementById('regSubmitBtn');
+            const status = document.getElementById('authStatus');
+
+            btn.disabled = true;
+            status.textContent = "Создание пользователя...";
+
+            try {
+                const res = await createUserWithEmailAndPassword(auth, email, pass);
+                const uid = res.user.uid;
+
+                // Супер-админ статус для главного аккаунта
+                const isAdmin = email.toLowerCase() === 'admin@nomabyte.sk' || email.toLowerCase().includes('noma');
+
+                const profileData = {
+                    uid: uid,
+                    email: email,
+                    name: name,
+                    country: country,
+                    lang: lang,
+                    role: isAdmin ? 'Chief Executive / Owner' : 'Tester',
+                    isAdmin: isAdmin,
+                    isBlocked: false,
+                    avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${uid}`
+                };
+
+                await setDoc(doc(db, "users", uid), profileData);
+                window.currentUserProfile = profileData;
+                status.textContent = "";
+            } catch (err) {
+                status.style.color = "#f87171";
+                status.textContent = "❌ Ошибка регистрации: " + err.message;
+            } finally {
+                btn.disabled = false;
+            }
+        };
+
+        // Выход
+        window.logout = async function() {
+            await signOut(auth);
+        };
+
+        // Сохранение профиля
+        window.saveProfile = async function() {
+            if (!window.currentFirebaseUser) return;
+            const uid = window.currentFirebaseUser.uid;
+
+            const updatedData = {
+                name: document.getElementById('profName').value,
+                country: document.getElementById('profCountry').value,
+                lang: document.getElementById('profLang').value,
+                avatar: document.getElementById('profAvatarUrl').value || window.currentUserProfile.avatar
+            };
+
+            try {
+                await updateDoc(doc(db, "users", uid), updatedData);
+                window.currentUserProfile = { ...window.currentUserProfile, ...updatedData };
+                showApp();
+                alert("Данные профиля успешно сохранены в Firebase!");
+            } catch (err) {
+                alert("Ошибка сохранения: " + err.message);
+            }
+        };
+
+        // Админка
+        window.renderAdminTable = async function() {
+            const querySnapshot = await getDocs(collection(db, "users"));
+            const tbody = document.getElementById('adminUserTable');
+            tbody.innerHTML = '';
+
+            querySnapshot.forEach((docSnap) => {
+                const u = docSnap.data();
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-800/40";
+                tr.innerHTML = `
+                    <td class="p-3 flex items-center space-x-3">
+                        <img class="w-8 h-8 rounded-full object-cover" src="${u.avatar}">
+                        <span class="font-medium text-white">${u.name}</span>
+                    </td>
+                    <td class="p-3 text-gray-400">${u.email}</td>
+                    <td class="p-3">${u.country} <span class="text-xs text-gray-500">(${u.lang})</span></td>
+                    <td class="p-3">
+                        <input type="text" value="${u.role}" onchange="window.updateUserRole('${u.uid}', this.value)" ${u.isAdmin ? 'disabled' : ''} class="bg-gray-900 border border-gray-700 rounded px-2 py-1 text-xs text-cyan-300">
+                    </td>
+                    <td class="p-3">
+                        ${u.isBlocked 
+                            ? '<span class="px-2 py-0.5 rounded bg-red-500/20 text-red-400 text-xs">Заблокирован</span>' 
+                            : '<span class="px-2 py-0.5 rounded bg-green-500/20 text-green-400 text-xs">Активен</span>'}
+                    </td>
+                    <td class="p-3 text-right space-x-2">
+                        ${!u.isAdmin ? `
+                            <button onclick="window.toggleBlockUser('${u.uid}', ${u.isBlocked})" class="px-2.5 py-1 rounded ${u.isBlocked ? 'bg-green-600' : 'bg-red-600'} text-white text-xs font-semibold">
+                                ${u.isBlocked ? 'Разблокировать' : 'Заблокировать'}
+                            </button>
+                        ` : '<span class="text-xs text-purple-400 font-bold">Главный Админ</span>'}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        };
+
+        window.updateUserRole = async function(uid, newRole) {
+            await updateDoc(doc(db, "users", uid), { role: newRole });
+        };
+
+        window.toggleBlockUser = async function(uid, currentStatus) {
+            await updateDoc(doc(db, "users", uid), { isBlocked: !currentStatus });
+            window.renderAdminTable();
+        };
+
+        // Отправка в Telegram
+        window.sendTelegramBug = async function(e) {
+            e.preventDefault();
+            const text = document.getElementById('bugText').value;
+            const fileInput = document.getElementById('bugFile');
+            const status = document.getElementById('bugStatus');
+            const btn = document.getElementById('bugSubmitBtn');
+
+            btn.disabled = true;
+            status.textContent = 'Отправка в Telegram...';
+
+            const profile = window.currentUserProfile || {};
+            const userCaption = `🐛 **Баг из облака Firebase:**\n👤 Пользователь: ${profile.name || 'Аноним'}\n📧 Email: ${profile.email || '—'}\n💼 Должность: ${profile.role || '—'}\n\n📝 **Описание:**\n${text}`;
+
+            try {
+                let res;
                 if (fileInput.files.length > 0) {
-                    // Send photo with attachment
-                    const formData = new FormData();
-                    formData.append('chat_id', TELEGRAM_CHAT_ID);
-                    formData.append('photo', fileInput.files[0]);
-                    formData.append('caption', fullCaption);
-                    formData.append('parse_mode', 'Markdown');
-
-                    response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, {
-                        method: 'POST',
-                        body: formData
-                    });
+                    const fd = new FormData();
+                    fd.append('chat_id', CHAT_ID);
+                    fd.append('photo', fileInput.files[0]);
+                    fd.append('caption', userCaption);
+                    res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd });
                 } else {
-                    // Send text message only
-                    response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            chat_id: TELEGRAM_CHAT_ID,
-                            text: fullCaption,
-                            parse_mode: 'Markdown'
-                        })
+                        body: JSON.stringify({ chat_id: CHAT_ID, text: userCaption, parse_mode: 'Markdown' })
                     });
                 }
-
-                const data = await response.json();
-
+                const data = await res.json();
                 if (data.ok) {
-                    showToast('Bug report & media sent directly to Telegram!');
-                    closeBugModal();
+                    status.style.color = '#4ade80';
+                    status.textContent = '✅ Сообщение доставлено администратору в Telegram!';
                     document.getElementById('telegramBugForm').reset();
                 } else {
-                    throw new Error(data.description || 'Telegram API Error');
+                    throw new Error();
                 }
             } catch (err) {
-                console.error(err);
-                showToast('Failed to send report. Check connection.');
+                status.style.color = '#f87171';
+                status.textContent = '❌ Ошибка отправки в Telegram.';
             } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = `<span>Send to Telegram</span> <i class="fa-solid fa-paper-plane text-xs"></i>`;
+                btn.disabled = false;
+            }
+        };
+    </script>
+
+    <script>
+        function switchAuthTab(tab) {
+            document.getElementById('loginForm').classList.toggle('hidden', tab !== 'login');
+            document.getElementById('registerForm').classList.toggle('hidden', tab !== 'register');
+            document.getElementById('tabLoginBtn').className = tab === 'login' ? 'flex-1 py-3 text-center font-semibold text-cyan-400 border-b-2 border-cyan-400 transition' : 'flex-1 py-3 text-center font-semibold text-gray-400 hover:text-white transition';
+            document.getElementById('tabRegisterBtn').className = tab === 'register' ? 'flex-1 py-3 text-center font-semibold text-cyan-400 border-b-2 border-cyan-400 transition' : 'flex-1 py-3 text-center font-semibold text-gray-400 hover:text-white transition';
+        }
+
+        function showAuth() {
+            document.getElementById('authContainer').classList.remove('hidden');
+            document.getElementById('appContainer').classList.add('hidden');
+            document.getElementById('navUserArea').classList.add('hidden');
+        }
+
+        function showApp() {
+            const profile = window.currentUserProfile;
+            document.getElementById('authContainer').classList.add('hidden');
+            document.getElementById('appContainer').classList.remove('hidden');
+            document.getElementById('navUserArea').classList.remove('hidden');
+
+            document.getElementById('navAvatar').src = profile.avatar;
+            document.getElementById('navUserName').textContent = profile.name;
+            document.getElementById('navUserBadge').textContent = profile.role;
+
+            if (profile.isAdmin) {
+                document.getElementById('adminTabBtn').classList.remove('hidden');
+            } else {
+                document.getElementById('adminTabBtn').classList.add('hidden');
+            }
+
+            loadProfileTab();
+            switchTab('profile');
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            if (tabName === 'profile') document.getElementById('tabProfile').classList.remove('hidden');
+            if (tabName === 'apps') document.getElementById('tabApps').classList.remove('hidden');
+            if (tabName === 'bugs') document.getElementById('tabBugs').classList.remove('hidden');
+            if (tabName === 'admin' && window.currentUserProfile?.isAdmin) {
+                document.getElementById('tabAdmin').classList.remove('hidden');
+                window.renderAdminTable();
             }
         }
 
-        // Toast Helper
-        function showToast(message) {
-            const toast = document.getElementById('toastNotification');
-            document.getElementById('toastText').textContent = message;
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3500);
+        function loadProfileTab() {
+            const profile = window.currentUserProfile;
+            document.getElementById('profName').value = profile.name;
+            document.getElementById('profRole').value = profile.role;
+            document.getElementById('profCountry').value = profile.country;
+            document.getElementById('profLang').value = profile.lang;
+            document.getElementById('profAvatarUrl').value = profile.avatar;
+            document.getElementById('profileAvatarPreview').src = profile.avatar;
+        }
+
+        function updateAvatarPreview() {
+            const url = document.getElementById('profAvatarUrl').value;
+            if(url) document.getElementById('profileAvatarPreview').src = url;
         }
     </script>
 </body>
