@@ -1,78 +1,50 @@
 <!DOCTYPE html>
-<html lang="ru" class="dark">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NomaByte Studio — Tester Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #090d16;
-            color: #f3f4f6;
-        }
-        .bg-grid {
-            background-size: 40px 40px;
-            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-        }
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .glass-card {
-            background: rgba(30, 41, 59, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .glass-card:hover {
-            background: rgba(30, 41, 59, 0.6);
-            border-color: rgba(56, 189, 248, 0.3);
-            transform: translateY(-2px);
-        }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 9999px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(56, 189, 248, 0.4); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #060913; color: #f3f4f6; }
+        .glass-panel { background: rgba(13, 18, 30, 0.75); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glass-card { background: rgba(20, 29, 48, 0.5); border: 1px solid rgba(255, 255, 255, 0.06); transition: all 0.2s ease; }
+        .glass-card:hover { border-color: rgba(56, 189, 248, 0.3); transform: translateY(-2px); }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(13, 18, 30, 0.5); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col bg-grid relative overflow-x-hidden">
+<body class="min-h-screen flex flex-col relative overflow-x-hidden">
 
-    <!-- Ambient Glow BG -->
-    <div class="fixed -top-40 -left-40 w-96 h-96 bg-cyan-500/10 rounded-full blur-[128px] pointer-events-none"></div>
-    <div class="fixed top-1/2 -right-40 w-96 h-96 bg-blue-600/10 rounded-full blur-[128px] pointer-events-none"></div>
+    <!-- Glowing Background Orbs -->
+    <div class="fixed -top-40 -left-40 w-96 h-96 bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="fixed top-1/3 -right-40 w-96 h-96 bg-purple-600/10 rounded-full blur-[140px] pointer-events-none"></div>
 
     <!-- Header Navbar -->
     <header class="glass-panel sticky top-0 z-50 border-b border-slate-800/80 px-6 py-3.5">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <a href="index.html" class="flex items-center space-x-3 group">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition">N</div>
-                    <div class="flex flex-col">
-                        <span class="font-bold text-base tracking-tight text-white leading-tight">NomaByte</span>
-                        <span class="text-[10px] font-semibold text-cyan-400 tracking-widest uppercase">Tester Hub</span>
-                    </div>
-                </a>
-            </div>
+            <a href="index.html" class="flex items-center space-x-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition">N</div>
+                <div class="flex flex-col">
+                    <span class="font-bold text-base tracking-tight text-white leading-tight">NomaByte</span>
+                    <span class="text-[10px] font-semibold text-cyan-400 tracking-widest uppercase">Security & Hub</span>
+                </div>
+            </a>
             
             <div class="flex items-center space-x-4">
                 <a href="index.html" class="text-slate-400 hover:text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-slate-800/50 transition">
-                    <i class="fa-solid fa-arrow-left mr-1.5"></i>На главную
+                    <i class="fa-solid fa-arrow-left mr-1.5"></i>Home
                 </a>
-                
                 <div id="navUserArea" class="hidden flex items-center space-x-3 border-l border-slate-800 pl-4">
-                    <div class="flex items-center space-x-2.5 bg-slate-900/80 px-3 py-1.5 rounded-full border border-slate-700/60 shadow-inner">
+                    <div class="flex items-center space-x-2.5 bg-slate-900/80 px-3 py-1.5 rounded-full border border-slate-700/60">
                         <img id="navAvatar" class="w-7 h-7 rounded-full object-cover ring-2 ring-cyan-500/40" src="" alt="Avatar">
-                        <span id="navUserName" class="text-xs font-medium text-slate-200 max-w-[120px] truncate">User</span>
-                        <span id="navUserBadge" class="text-[9px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 font-bold border border-cyan-500/20 uppercase tracking-wider">Role</span>
+                        <span id="navUserName" class="text-xs font-medium text-slate-200">User</span>
+                        <span id="navUserBadge" class="text-[9px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 font-bold border border-cyan-500/20 uppercase">Role</span>
                     </div>
-                    <button onclick="logout()" title="Выйти" class="w-8 h-8 rounded-full bg-slate-800/60 hover:bg-red-500/20 text-slate-400 hover:text-red-400 border border-slate-700/50 flex items-center justify-center transition">
+                    <button onclick="logout()" class="w-8 h-8 rounded-full bg-slate-800/60 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 flex items-center justify-center transition">
                         <i class="fa-solid fa-right-from-bracket text-xs"></i>
                     </button>
                 </div>
@@ -80,98 +52,99 @@
         </div>
     </header>
 
-    <!-- AUTH CONTAINER (Логин / Регистрация) -->
+    <!-- AUTH CONTAINER (EN) -->
     <div id="authContainer" class="flex-1 flex items-center justify-center p-6 my-auto">
-        <div class="glass-panel w-full max-w-md p-8 rounded-3xl shadow-2xl relative overflow-hidden border border-slate-700/50">
-            <div class="text-center mb-8">
-                <h2 class="text-2xl font-bold text-white tracking-tight">Добро пожаловать</h2>
-                <p class="text-xs text-slate-400 mt-1">Войдите в аккаунт или зарегистрируйтесь как тестер</p>
+        <div class="glass-panel w-full max-w-lg p-8 rounded-3xl shadow-2xl border border-slate-700/50">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-extrabold text-white tracking-tight">NomaByte Portal</h2>
+                <p class="text-xs text-slate-400 mt-1">Sign in or register to join the testing ecosystem</p>
             </div>
 
-            <!-- Tab Switcher -->
+            <!-- Tabs -->
             <div class="flex bg-slate-900/80 p-1 rounded-xl border border-slate-800 mb-6">
-                <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-2 text-xs font-semibold rounded-lg text-cyan-400 bg-slate-800 shadow transition">Вход</button>
-                <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="flex-1 py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition">Регистрация</button>
+                <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-2 text-xs font-semibold rounded-lg text-cyan-400 bg-slate-800 shadow transition">Sign In</button>
+                <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="flex-1 py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition">Register</button>
             </div>
 
             <!-- Login Form -->
             <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
-                    <label class="text-[11px] font-medium text-slate-400 mb-1.5 block">Email адрес</label>
-                    <input type="email" id="loginEmail" required class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition" placeholder="name@company.com">
+                    <label class="text-[11px] font-medium text-slate-400 mb-1 block">Email Address</label>
+                    <input type="email" id="loginEmail" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:border-cyan-500 outline-none">
                 </div>
                 <div>
-                    <label class="text-[11px] font-medium text-slate-400 mb-1.5 block">Пароль</label>
-                    <input type="password" id="loginPassword" required class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition" placeholder="••••••••">
+                    <label class="text-[11px] font-medium text-slate-400 mb-1 block">Password</label>
+                    <input type="password" id="loginPassword" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:border-cyan-500 outline-none">
                 </div>
-                <button type="submit" id="loginSubmitBtn" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold py-2.5 rounded-xl text-xs shadow-lg shadow-cyan-500/25 transition">Войти в хаб</button>
+                <button type="submit" id="loginSubmitBtn" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 text-white font-semibold py-2.5 rounded-xl text-xs shadow-lg shadow-cyan-500/20 transition">Sign In</button>
             </form>
 
-            <!-- Register Form -->
-            <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-3.5 hidden">
-                <div>
-                    <label class="text-[11px] font-medium text-slate-400 mb-1 block">Имя и Фамилия</label>
-                    <input type="text" id="regName" required class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-white focus:border-cyan-500 outline-none transition" placeholder="Alexander V.">
-                </div>
-                <div>
-                    <label class="text-[11px] font-medium text-slate-400 mb-1 block">Email адрес</label>
-                    <input type="email" id="regEmail" required class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-white focus:border-cyan-500 outline-none transition" placeholder="name@company.com">
-                </div>
-                <div>
-                    <label class="text-[11px] font-medium text-slate-400 mb-1 block">Пароль</label>
-                    <input type="password" id="regPassword" required class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-white focus:border-cyan-500 outline-none transition" placeholder="••••••••">
-                </div>
-                
-                <!-- Поиск страны с удобным списком -->
-                <div>
-                    <label class="text-[11px] font-medium text-slate-400 mb-1 block">Страна проживания</label>
-                    <div class="relative mb-1.5">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-500">
-                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                        </span>
-                        <input type="text" id="countrySearch" placeholder="Начните вводить (Slovakia, Ukraine...)" oninput="filterCountries()" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl pl-8 pr-3 py-1.5 text-xs text-white placeholder-slate-600 focus:border-cyan-500 outline-none transition">
+            <!-- Register Form (EN) -->
+            <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-4 hidden">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-[11px] font-medium text-slate-400 mb-1 block">Full Name</label>
+                        <input type="text" id="regName" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none" placeholder="John Doe">
                     </div>
-                    <select id="regCountry" size="3" class="w-full bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-300 outline-none p-1.5 custom-scrollbar">
-                        <!-- Заполняется JS -->
-                    </select>
+                    <div>
+                        <label class="text-[11px] font-medium text-slate-400 mb-1 block">Role Selection</label>
+                        <select id="regRoleSelect" onchange="onRoleChange()" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-cyan-400 font-bold focus:border-cyan-500 outline-none">
+                            <option value="Tester">Tester</option>
+                            <option value="Developer">Developer</option>
+                            <option value="Admin">Admin (Requires Approval)</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div>
-                    <label class="text-[11px] font-medium text-slate-400 mb-1 block">Язык приложения (UI)</label>
-                    <select id="regLang" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-300 outline-none focus:border-cyan-500 transition">
-                        <option value="ru">Русский (RU)</option>
-                        <option value="en">English (EN)</option>
-                        <option value="sk">Slovenčina (SK)</option>
-                        <option value="uk">Українська (UK)</option>
-                        <option value="ro">Română (RO)</option>
-                        <option value="ka">ქართული (KA)</option>
-                        <option value="uz">O'zbek (UZ)</option>
-                        <option value="kk">Қазақша (KK)</option>
-                    </select>
+                    <label class="text-[11px] font-medium text-slate-400 mb-1 block">Email Address</label>
+                    <input type="email" id="regEmail" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none" placeholder="name@domain.com">
+                </div>
+                <div>
+                    <label class="text-[11px] font-medium text-slate-400 mb-1 block">Password</label>
+                    <input type="password" id="regPassword" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none" placeholder="••••••••">
                 </div>
 
-                <button type="submit" id="regSubmitBtn" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-semibold py-2.5 rounded-xl text-xs shadow-lg shadow-emerald-500/20 transition mt-2">Создать аккаунт</button>
+                <!-- Country Search -->
+                <div>
+                    <label class="text-[11px] font-medium text-slate-400 mb-1 block">Country (Search)</label>
+                    <div class="relative mb-1">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-500"><i class="fa-solid fa-magnifying-glass text-xs"></i></span>
+                        <input type="text" id="countrySearch" placeholder="Type country name..." oninput="filterCountries()" class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-8 pr-3 py-1.5 text-xs text-white outline-none">
+                    </div>
+                    <select id="regCountry" size="3" class="w-full bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-300 p-1 custom-scrollbar"></select>
+                </div>
+
+                <!-- Avatar Selection & Security -->
+                <div>
+                    <label class="text-[11px] font-medium text-slate-400 mb-1.5 block">Choose Preset Avatar or Custom URL (<span class="text-cyan-400">NomaByte Security +18 Active</span>)</label>
+                    <div class="flex items-center gap-2 mb-2 overflow-x-auto pb-1" id="avatarPicker">
+                        <!-- Loaded dynamically -->
+                    </div>
+                    <input type="text" id="regAvatarUrl" placeholder="Or paste direct image URL..." class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-300 outline-none" oninput="checkSecurityAndPreview(this.value)">
+                    <div id="securityWarning" class="text-[10px] mt-1 text-slate-500">🛡️ NomaByte Security: Clean content verified.</div>
+                </div>
+
+                <button type="submit" id="regSubmitBtn" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 text-white font-semibold py-2.5 rounded-xl text-xs shadow-lg shadow-emerald-500/20 transition">Register Account</button>
             </form>
-            
             <div id="authStatus" class="mt-4 text-center text-xs font-medium"></div>
         </div>
     </div>
 
     <!-- MAIN APP DASHBOARD -->
-    <div id="appContainer" class="hidden flex-1 p-6 max-w-7xl mx-auto w-full space-y-8">
+    <div id="appContainer" class="hidden flex-1 p-6 max-w-7xl mx-auto w-full space-y-6">
         
-        <!-- Header Nav Tabs -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900/40 p-2 rounded-2xl border border-slate-800/80">
-            <div class="px-3">
-                <h1 class="text-xl font-bold text-white tracking-tight">Панель Тестирования</h1>
-                <p class="text-xs text-slate-400">Синхронизировано с Firebase Cloud (`azbuka-sk`)</p>
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900/50 p-3 rounded-2xl border border-slate-800">
+            <div class="px-2">
+                <h1 class="text-xl font-bold text-white" id="welcomeTitle">Dashboard</h1>
+                <p class="text-xs text-slate-400">Connected to Firebase Cloud (`azbuka-sk`)</p>
             </div>
             
-            <div class="flex flex-wrap gap-1.5 w-full md:w-auto">
-                <button onclick="switchTab('profile')" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold transition bg-cyan-500/10 text-cyan-400 border border-cyan-500/20" id="btnTabProfile"><i class="fa-solid fa-user-gear mr-2"></i>Профиль</button>
-                <button onclick="switchTab('apps')" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 transition" id="btnTabApps"><i class="fa-solid fa-cubes mr-2"></i>Приложения</button>
-                <button onclick="switchTab('bugs')" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 transition" id="btnTabBugs"><i class="fa-solid fa-bug mr-2 text-rose-400"></i>Баг-Трекер</button>
-                <button id="adminTabBtn" onclick="switchTab('admin')" class="hidden tab-btn px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-lg shadow-purple-500/20 transition"><i class="fa-solid fa-shield-halved mr-2"></i>Админка</button>
+            <div class="flex flex-wrap gap-1.5">
+                <button onclick="switchTab('profile')" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20" id="btnTabProfile"><i class="fa-solid fa-user mr-2"></i>Profile</button>
+                <button onclick="switchTab('apps')" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white" id="btnTabApps"><i class="fa-solid fa-cubes mr-2"></i>Apps</button>
+                <button onclick="switchTab('bugs')" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white" id="btnTabBugs"><i class="fa-solid fa-bug mr-2 text-rose-400"></i>Bug Tracker</button>
+                <button id="adminTabBtn" onclick="switchTab('admin')" class="hidden tab-btn px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg"><i class="fa-solid fa-shield-halved mr-2"></i>Admin Panel</button>
             </div>
         </div>
 
@@ -180,87 +153,60 @@
             <div class="glass-panel p-8 rounded-3xl max-w-2xl mx-auto space-y-6 border border-slate-800">
                 <div class="flex items-center justify-between border-b border-slate-800 pb-4">
                     <div>
-                        <h2 class="text-lg font-bold text-white">Личный профиль</h2>
-                        <p class="text-xs text-slate-400">Управляйте вашими данными в экосистеме</p>
+                        <h2 class="text-lg font-bold text-white">Profile Settings</h2>
+                        <p class="text-xs text-slate-400">Manage your account credentials</p>
                     </div>
-                    <span class="text-xs px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-semibold" id="profRoleBadge">Tester</span>
+                    <span class="text-xs px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-bold" id="profRoleBadge">Tester</span>
                 </div>
 
                 <div class="flex items-center space-x-6 bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
                     <img id="profileAvatarPreview" class="w-20 h-20 rounded-2xl object-cover ring-2 ring-cyan-500/50 shadow-xl" src="" alt="Avatar">
                     <div class="space-y-1.5 flex-1">
-                        <label class="text-[11px] font-semibold text-slate-400 block">Прямая ссылка на аватарку (URL)</label>
-                        <input type="text" id="profAvatarUrl" oninput="updateAvatarPreview()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-cyan-500 outline-none" placeholder="https://...">
-                        <p class="text-[10px] text-slate-500">Вставьте ссылку на любой графический файл</p>
+                        <label class="text-[11px] font-semibold text-slate-400 block">Avatar URL / Security +18 Verified</label>
+                        <input type="text" id="profAvatarUrl" oninput="checkSecurityAndPreviewProfile(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 outline-none">
+                        <p class="text-[10px] text-emerald-400" id="profSecurityStatus">🛡️ NomaByte Security: Protected</p>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="text-[11px] font-medium text-slate-400 mb-1 block">Имя и Фамилия</label>
-                        <input type="text" id="profName" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-cyan-500 outline-none">
+                        <label class="text-[11px] font-medium text-slate-400 mb-1 block">Full Name</label>
+                        <input type="text" id="profName" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none">
                     </div>
                     <div>
-                        <label class="text-[11px] font-medium text-slate-400 mb-1 block">Должность (Назначает Админ)</label>
-                        <input type="text" id="profRole" disabled class="w-full bg-slate-950/60 border border-slate-800 text-slate-500 rounded-xl px-3.5 py-2.5 text-xs cursor-not-allowed font-medium">
+                        <label class="text-[11px] font-medium text-slate-400 mb-1 block">Role</label>
+                        <input type="text" id="profRole" disabled class="w-full bg-slate-950/60 border border-slate-800 text-slate-500 rounded-xl px-3.5 py-2.5 text-xs font-medium cursor-not-allowed">
                     </div>
                     <div>
-                        <label class="text-[11px] font-medium text-slate-400 mb-1 block">Страна</label>
-                        <input type="text" id="profCountry" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-cyan-500 outline-none">
+                        <label class="text-[11px] font-medium text-slate-400 mb-1 block">Country</label>
+                        <input type="text" id="profCountry" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none">
                     </div>
                     <div>
-                        <label class="text-[11px] font-medium text-slate-400 mb-1 block">Основной язык UI</label>
-                        <select id="profLang" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:border-cyan-500 outline-none">
-                            <option value="ru">Русский (RU)</option>
+                        <label class="text-[11px] font-medium text-slate-400 mb-1 block">UI Language (All World Languages)</label>
+                        <select id="profLang" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-200 outline-none">
                             <option value="en">English (EN)</option>
+                            <option value="ru">Русский (RU)</option>
                             <option value="sk">Slovenčina (SK)</option>
                             <option value="uk">Українська (UK)</option>
                             <option value="ro">Română (RO)</option>
                             <option value="ka">ქართული (KA)</option>
                             <option value="uz">O'zbek (UZ)</option>
                             <option value="kk">Қазақша (KK)</option>
+                            <option value="es">Español (ES)</option>
+                            <option value="de">Deutsch (DE)</option>
+                            <option value="fr">Français (FR)</option>
                         </select>
                     </div>
                 </div>
 
-                <button onclick="saveProfile()" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold py-3 rounded-xl text-xs shadow-lg shadow-cyan-500/20 transition">Сохранить изменения</button>
+                <button onclick="saveProfile()" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 text-white font-semibold py-3 rounded-xl text-xs shadow-lg shadow-cyan-500/20 transition">Save Changes</button>
             </div>
         </div>
 
         <!-- TAB 2: APPS -->
         <div id="tabApps" class="tab-content hidden space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- App 1 -->
-                <div class="glass-card p-6 rounded-3xl flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-cyan-500/25">A</div>
-                            <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Active Beta</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-white mb-1">Azbuka SK (SlovoGo)</h3>
-                        <p class="text-xs text-slate-400 mb-6 leading-relaxed">Образовательное приложение с 250 уроками словацкого языка для 8 языковых групп.</p>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <button class="flex-1 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold py-2.5 rounded-xl border border-slate-700 transition">Запустить тест</button>
-                        <button onclick="switchTab('bugs')" class="px-4 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-rose-400 text-xs font-semibold py-2.5 rounded-xl border border-slate-800 transition"><i class="fa-solid fa-bug"></i></button>
-                    </div>
-                </div>
-
-                <!-- App 2 -->
-                <div class="glass-card p-6 rounded-3xl flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-purple-500/25">V</div>
-                            <span class="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 text-[10px] font-bold">Google Play Live</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-white mb-1">Vodičák SK</h3>
-                        <p class="text-xs text-slate-400 mb-6 leading-relaxed">Интерактивный симулятор экзаменационных тестов автошколы Словакии.</p>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <button class="flex-1 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold py-2.5 rounded-xl border border-slate-700 transition">Запустить тест</button>
-                        <button onclick="switchTab('bugs')" class="px-4 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-rose-400 text-xs font-semibold py-2.5 rounded-xl border border-slate-800 transition"><i class="fa-solid fa-bug"></i></button>
-                    </div>
-                </div>
+            <div id="roleBasedAppFeatures" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Dynamically adjusted based on role -->
             </div>
         </div>
 
@@ -268,51 +214,48 @@
         <div id="tabBugs" class="tab-content hidden">
             <div class="glass-panel p-8 rounded-3xl max-w-xl mx-auto space-y-6 border border-slate-800">
                 <div class="flex items-center space-x-3 border-b border-slate-800 pb-4">
-                    <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400">
-                        <i class="fa-solid fa-bug text-lg"></i>
-                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400"><i class="fa-solid fa-bug text-lg"></i></div>
                     <div>
-                        <h2 class="text-lg font-bold text-white">Центр Отправки Ошибок</h2>
-                        <p class="text-xs text-slate-400">Отчет уйдет напрямую разработчику в Telegram</p>
+                        <h2 class="text-lg font-bold text-white">Bug Tracker Dispatcher</h2>
+                        <p class="text-xs text-slate-400">Direct telegram integration (@NomaByteBot)</p>
                     </div>
                 </div>
 
                 <form id="telegramBugForm" onsubmit="sendTelegramBug(event)" class="space-y-4">
                     <div>
-                        <label class="text-[11px] font-medium text-slate-400 mb-1.5 block">Описание ошибки</label>
-                        <textarea id="bugText" required rows="4" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3.5 text-xs text-slate-200 placeholder-slate-600 focus:border-rose-500 outline-none transition" placeholder="Опишите, при каких действиях произошла ошибка..."></textarea>
+                        <label class="text-[11px] font-medium text-slate-400 mb-1.5 block">Issue Description</label>
+                        <textarea id="bugText" required rows="4" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3.5 text-xs text-slate-200 outline-none" placeholder="Describe the bug..."></textarea>
                     </div>
                     <div>
-                        <label class="text-[11px] font-medium text-slate-400 mb-1.5 block">Скриншот или лог (необязательно)</label>
-                        <input type="file" id="bugFile" accept="image/*" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2 text-xs text-slate-400 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-slate-300 hover:file:bg-slate-700">
+                        <label class="text-[11px] font-medium text-slate-400 mb-1.5 block">Attach Screenshot</label>
+                        <input type="file" id="bugFile" accept="image/*" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2 text-xs text-slate-400">
                     </div>
-                    <button type="submit" id="bugSubmitBtn" class="w-full bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-semibold py-3 rounded-xl text-xs shadow-lg shadow-rose-600/20 transition">Отправить баг-репорт</button>
+                    <button type="submit" id="bugSubmitBtn" class="w-full bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 text-white font-semibold py-3 rounded-xl text-xs shadow-lg shadow-rose-600/20 transition">Dispatch Bug Report</button>
                 </form>
                 <div id="bugStatus" class="text-center text-xs font-medium"></div>
             </div>
         </div>
 
-        <!-- TAB 4: ADMIN -->
+        <!-- TAB 4: ADMIN PANEL -->
         <div id="tabAdmin" class="tab-content hidden space-y-6">
             <div class="glass-panel p-8 rounded-3xl border border-purple-500/30 space-y-6">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-4">
                     <div>
-                        <h2 class="text-lg font-bold text-purple-400">Управление пользователями</h2>
-                        <p class="text-xs text-slate-400">Панель Главного Администратора NomaByte Studio</p>
+                        <h2 class="text-lg font-bold text-purple-400">Admin Control Center</h2>
+                        <p class="text-xs text-slate-400">Approve Admin requests and manage system roles</p>
                     </div>
-                    <span class="px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20 text-[10px] font-mono font-bold">SUPERADMIN</span>
+                    <span class="px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20 text-[10px] font-bold">SUPERADMIN</span>
                 </div>
 
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs text-slate-300">
                         <thead class="bg-slate-900/90 text-[10px] uppercase text-slate-400 tracking-wider">
                             <tr>
-                                <th class="p-3.5 rounded-l-xl">Пользователь</th>
+                                <th class="p-3.5">User</th>
                                 <th class="p-3.5">Email</th>
-                                <th class="p-3.5">Страна / Язык</th>
-                                <th class="p-3.5">Должность</th>
-                                <th class="p-3.5">Статус</th>
-                                <th class="p-3.5 text-right rounded-r-xl">Действия</th>
+                                <th class="p-3.5">Requested / Current Role</th>
+                                <th class="p-3.5">Status</th>
+                                <th class="p-3.5 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="adminUserTable" class="divide-y divide-slate-800/60"></tbody>
@@ -323,7 +266,7 @@
 
     </div>
 
-    <!-- FIREBASE & SCRIPT LOGIC -->
+    <!-- SCRIPT & FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -349,12 +292,25 @@
         window.currentFirebaseUser = null;
         window.currentUserProfile = null;
 
+        // Ваши аватарки из изображений
+        const presetAvatars = [
+            "https://i.ibb.co/1G05JqW/image-10.png", // Ракетный запуск
+            "https://i.ibb.co/6y4jG0C/image-11.png", // Терминал / Код
+            "https://i.ibb.co/7v3C6kX/image-13.png", // Код теги
+            "https://i.ibb.co/4T7s2z8/image-14.png", // Корона (Админ)
+            "https://i.ibb.co/89K6W7Q/image-15.png", // Страж (Админ)
+            "https://i.ibb.co/9v2F1xK/image-16.png", // QA Бот
+            "https://i.ibb.co/5R3J7cQ/image-17.png", // Лупа QA
+            "https://i.ibb.co/2k91X0q/image-18.png"  // Охотник на баги
+        ];
+
+        // Все страны мира
         const countriesList = [
-            "🇸KB Slovakia (Словакия)", "🇺🇦 Ukraine (Украина)", "🇷🇺 Russia (Россия)", 
-            "🇨🇿 Czech Republic (Чехия)", "🇷🇴 Romania (Румыния)", "🇬🇪 Georgia (Грузия)", 
-            "🇺🇿 Uzbekistan (Узбекистан)", "🇰🇿 Kazakhstan (Казахстан)", "🇬🇧 United Kingdom (Великобритания)", 
-            "🇩🇪 Germany (Германия)", "🇵🇱 Poland (Польша)", "🇦🇹 Austria (Австрия)", 
-            "🇫🇷 France (Франция)", "🇮🇹 Italy (Италия)", "🇪🇸 Spain (Испания)", "🇺🇸 United States (США)"
+            "🇸🇰 Slovakia", "🇺🇦 Ukraine", "🇷🇺 Russia", "🇨🇿 Czech Republic", "🇷🇴 Romania", 
+            "🇬🇪 Georgia", "🇺🇿 Uzbekistan", "🇰🇿 Kazakhstan", "🇬🇧 United Kingdom", "🇩🇪 Germany", 
+            "🇵🇱 Poland", "🇦🇹 Austria", "🇫🇷 France", "🇮🇹 Italy", "🇪🇸 Spain", "🇺🇸 United States",
+            "🇨🇦 Canada", "🇦🇺 Australia", "🇯🇵 Japan", "🇰🇷 South Korea", "🇨🇳 China", "🇮🇳 India",
+            "🇧🇷 Brazil", "🇲🇽 Mexico", "🇦🇷 Argentina", "Ｓ🇪 Sweden", "🇳🇴 Norway", "🇫🇮 Finland"
         ];
 
         window.populateCountries = function(filter = "") {
@@ -366,7 +322,6 @@
                 const opt = document.createElement('option');
                 opt.value = c;
                 opt.textContent = c;
-                opt.className = "py-1 px-2 hover:bg-slate-800 rounded cursor-pointer";
                 select.appendChild(opt);
             });
             if(filtered.length > 0) select.selectedIndex = 0;
@@ -377,27 +332,71 @@
             window.populateCountries(query);
         };
 
+        window.renderAvatarPicker = function() {
+            const container = document.getElementById('avatarPicker');
+            if(!container) return;
+            container.innerHTML = '';
+            presetAvatars.forEach((url, idx) => {
+                const img = document.createElement('img');
+                img.src = url;
+                img.className = "w-10 h-10 rounded-xl object-cover cursor-pointer ring-2 ring-transparent hover:ring-cyan-400 transition flex-shrink-0";
+                img.onclick = () => {
+                    document.getElementById('regAvatarUrl').value = url;
+                    document.getElementById('securityWarning').innerHTML = "🛡️ NomaByte Security: Verified Preset ✅";
+                    document.getElementById('securityWarning').className = "text-[10px] mt-1 text-emerald-400";
+                };
+                container.appendChild(img);
+            });
+        };
+
+        // NomaByte Security (+18 check emulation)
+        window.checkSecurityAndPreview = function(url) {
+            const warning = document.getElementById('securityWarning');
+            if(!url) return;
+            if(url.toLowerCase().includes('porno') || url.toLowerCase().includes('nsfw') || url.toLowerCase().includes('adult')) {
+                warning.innerHTML = "❌ NomaByte Security: +18 Content Blocked!";
+                warning.className = "text-[10px] mt-1 text-rose-400 font-bold";
+                document.getElementById('regAvatarUrl').value = presetAvatars[0];
+            } else {
+                warning.innerHTML = "🛡️ NomaByte Security: Passed ✅";
+                warning.className = "text-[10px] mt-1 text-emerald-400";
+            }
+        };
+
         window.onload = function() {
             window.populateCountries();
+            window.renderAvatarPicker();
+            document.getElementById('regAvatarUrl').value = presetAvatars[0];
+        };
+
+        window.onRoleChange = function() {
+            const role = document.getElementById('regRoleSelect').value;
+            const btn = document.getElementById('regSubmitBtn');
+            if(role === 'Admin') {
+                btn.textContent = "Send for Review (Awaiting Owner Approval)";
+                btn.className = "w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 text-white font-semibold py-2.5 rounded-xl text-xs shadow-lg shadow-purple-500/25 transition mt-2";
+            } else {
+                btn.textContent = "Register Account";
+                btn.className = "w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 text-white font-semibold py-2.5 rounded-xl text-xs shadow-lg shadow-emerald-500/20 transition mt-2";
+            }
         };
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 window.currentFirebaseUser = user;
-                try {
-                    const userDoc = await getDoc(doc(db, "users", user.uid));
-                    if (userDoc.exists()) {
-                        window.currentUserProfile = userDoc.data();
-                        if (window.currentUserProfile.isBlocked) {
-                            alert("⚠️ Ваш аккаунт заблокирован Администратором!");
-                            await signOut(auth);
-                            showAuth();
-                            return;
-                        }
-                        showApp();
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (userDoc.exists()) {
+                    window.currentUserProfile = userDoc.data();
+                    if (window.currentUserProfile.isBlocked) {
+                        alert("⚠️ Account blocked by Administrator!");
+                        await signOut(auth);
+                        showAuth();
+                        return;
                     }
-                } catch (e) {
-                    console.error("Firestore error:", e);
+                    if (window.currentUserProfile.role === 'Admin' && !window.currentUserProfile.isApproved) {
+                        alert("⏳ Your Admin request is awaiting Owner approval.");
+                    }
+                    showApp();
                 }
             } else {
                 window.currentFirebaseUser = null;
@@ -412,14 +411,12 @@
             const pass = document.getElementById('loginPassword').value;
             const status = document.getElementById('authStatus');
 
-            status.style.color = "#38bdf8";
-            status.textContent = "Авторизация...";
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
                 status.textContent = "";
             } catch (err) {
                 status.style.color = "#f43f5e";
-                status.textContent = "❌ Ошибка входа: " + err.message;
+                status.textContent = "❌ Login error: " + err.message;
             }
         };
 
@@ -428,28 +425,32 @@
             const email = document.getElementById('regEmail').value;
             const pass = document.getElementById('regPassword').value;
             const name = document.getElementById('regName').value;
+            const role = document.getElementById('regRoleSelect').value;
             const countrySelect = document.getElementById('regCountry');
             const country = countrySelect.options[countrySelect.selectedIndex]?.value || "Slovakia";
-            const lang = document.getElementById('regLang').value;
+            const avatar = document.getElementById('regAvatarUrl').value || presetAvatars[0];
             const status = document.getElementById('authStatus');
 
-            status.style.color = "#38bdf8";
-            status.textContent = "Создание аккаунта...";
+            // Главный создатель всегда SuperAdmin
+            const isOwner = email.toLowerCase().includes('josan') || email.toLowerCase().includes('admin') || email.toLowerCase().includes('noma');
+            const finalRole = isOwner ? 'Admin' : role;
+            const isApproved = isOwner ? true : (role !== 'Admin');
+
             try {
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
                 const uid = res.user.uid;
-                const isAdmin = email.toLowerCase().includes('admin') || email.toLowerCase().includes('josan') || email.toLowerCase().includes('noma');
 
                 const profileData = {
                     uid: uid,
                     email: email,
                     name: name,
                     country: country,
-                    lang: lang,
-                    role: isAdmin ? 'Chief Executive / Owner' : 'Tester',
-                    isAdmin: isAdmin,
+                    lang: 'en',
+                    role: finalRole,
+                    isAdmin: isOwner,
+                    isApproved: isApproved,
                     isBlocked: false,
-                    avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${uid}`
+                    avatar: avatar
                 };
 
                 await setDoc(doc(db, "users", uid), profileData);
@@ -457,7 +458,7 @@
                 showApp();
             } catch (err) {
                 status.style.color = "#f43f5e";
-                status.textContent = "❌ Ошибка: " + err.message;
+                status.textContent = "❌ Error: " + err.message;
             }
         };
 
@@ -479,9 +480,42 @@
                 await updateDoc(doc(db, "users", uid), updatedData);
                 window.currentUserProfile = { ...window.currentUserProfile, ...updatedData };
                 showApp();
-                alert("Профиль успешно обновлен!");
+                alert("Profile successfully saved!");
             } catch (err) {
-                alert("Ошибка сохранения: " + err.message);
+                alert("Error: " + err.message);
+            }
+        };
+
+        // Рендер функций в зависимости от должности
+        window.renderRoleFeatures = function() {
+            const container = document.getElementById('roleBasedAppFeatures');
+            const role = window.currentUserProfile?.role || 'Tester';
+            container.innerHTML = '';
+
+            if (role === 'Tester') {
+                container.innerHTML = `
+                    <div class="glass-card p-6 rounded-3xl">
+                        <h3 class="text-lg font-bold text-cyan-400 mb-2"><i class="fa-solid fa-bug mr-2"></i>Bug Hunting Area</h3>
+                        <p class="text-xs text-slate-400 mb-4">Test apps, log issues, and earn QA points.</p>
+                        <button onclick="switchTab('bugs')" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold rounded-xl">Open Bug Tracker</button>
+                    </div>
+                `;
+            } else if (role === 'Developer') {
+                container.innerHTML = `
+                    <div class="glass-card p-6 rounded-3xl">
+                        <h3 class="text-lg font-bold text-blue-400 mb-2"><i class="fa-solid fa-code mr-2"></i>Developer Terminal & API</h3>
+                        <p class="text-xs text-slate-400 mb-4">Manage builds, Firebase SDK configs, and source endpoints.</p>
+                        <button class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-xl">View API Docs</button>
+                    </div>
+                `;
+            } else if (role === 'Admin') {
+                container.innerHTML = `
+                    <div class="glass-card p-6 rounded-3xl border border-purple-500/30">
+                        <h3 class="text-lg font-bold text-purple-400 mb-2"><i class="fa-solid fa-shield-halved mr-2"></i>Security & Admin Controls</h3>
+                        <p class="text-xs text-slate-400 mb-4">Approve new admins, block users, and monitor system security.</p>
+                        <button onclick="switchTab('admin')" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold rounded-xl">Open Admin Panel</button>
+                    </div>
+                `;
             }
         };
 
@@ -501,27 +535,28 @@
                         <span class="font-semibold text-white">${u.name}</span>
                     </td>
                     <td class="p-3.5 text-slate-400 font-mono text-[11px]">${u.email}</td>
-                    <td class="p-3.5">${u.country} <span class="text-[10px] text-slate-500 font-bold">(${u.lang})</span></td>
+                    <td class="p-3.5"><span class="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 text-[10px] font-bold">${u.role}</span></td>
                     <td class="p-3.5">
-                        <input type="text" value="${u.role}" onchange="window.updateUserRole('${u.uid}', this.value)" ${u.isAdmin ? 'disabled' : ''} class="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1 text-xs text-cyan-400 focus:border-cyan-500 outline-none">
-                    </td>
-                    <td class="p-3.5">
-                        ${u.isBlocked ? '<span class="px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 text-[10px] font-bold">Заблокирован</span>' : '<span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Активен</span>'}
+                        ${!u.isApproved 
+                            ? '<span class="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-bold">Pending Review</span>' 
+                            : (u.isBlocked ? '<span class="px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 text-[10px] font-bold">Blocked</span>' : '<span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold">Approved</span>')}
                     </td>
                     <td class="p-3.5 text-right space-x-2">
-                        ${!u.isAdmin ? `
-                            <button onclick="window.toggleBlockUser('${u.uid}', ${u.isBlocked})" class="px-3 py-1 rounded-lg ${u.isBlocked ? 'bg-emerald-600 hover:bg-emerald-500' : 'bg-rose-600 hover:bg-rose-500'} text-white text-[11px] font-semibold transition">
-                                ${u.isBlocked ? 'Разблокировать' : 'Заблокировать'}
-                            </button>
-                        ` : '<span class="text-xs text-purple-400 font-bold">Владелец</span>'}
+                        ${!u.isApproved ? `
+                            <button onclick="window.approveAdmin('${u.uid}')" class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-semibold">Approve Admin</button>
+                        ` : ''}
+                        <button onclick="window.toggleBlockUser('${u.uid}', ${u.isBlocked})" class="px-3 py-1 rounded-lg ${u.isBlocked ? 'bg-emerald-600' : 'bg-rose-600'} text-white text-[11px] font-semibold">
+                            ${u.isBlocked ? 'Unblock' : 'Block'}
+                        </button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         };
 
-        window.updateUserRole = async function(uid, newRole) {
-            await updateDoc(doc(db, "users", uid), { role: newRole });
+        window.approveAdmin = async function(uid) {
+            await updateDoc(doc(db, "users", uid), { isApproved: true });
+            window.renderAdminTable();
         };
 
         window.toggleBlockUser = async function(uid, currentStatus) {
@@ -529,80 +564,42 @@
             window.renderAdminTable();
         };
 
-                window.sendTelegramBug = async function(e) {
+        window.sendTelegramBug = async function(e) {
             e.preventDefault();
             const text = document.getElementById('bugText').value;
             const fileInput = document.getElementById('bugFile');
             const status = document.getElementById('bugStatus');
             const profile = window.currentUserProfile || {};
-            const userCaption = `🐛 **Новый баг-репорт:**\n👤 Пользователь: ${profile.name || 'User'}\n📧 Email: ${profile.email || '—'}\n💼 Должность: ${profile.role || '—'}\n\n📝 **Описание:**\n${text}`;
+            const userCaption = `🐛 **Bug Report:**\n👤 User: ${profile.name}\n📧 Email: ${profile.email}\n💼 Role: ${profile.role}\n\n📝 **Description:**\n${text}`;
 
             status.style.color = "#38bdf8";
-            status.textContent = 'Отправка в Telegram...';
-
+            status.textContent = 'Dispatching to Telegram...';
             try {
                 let res;
-                // Если пользователь прикрепил фото, отправляем через метод sendPhoto с обходом CORS через публичный прокси (или только текст)
                 if (fileInput.files.length > 0) {
                     const fd = new FormData();
                     fd.append('chat_id', CHAT_ID);
                     fd.append('photo', fileInput.files[0]);
                     fd.append('caption', userCaption);
-                    
-                    res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { 
-                        method: 'POST', 
-                        body: fd 
-                    });
+                    res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd });
                 } else {
-                    // Чистый текст отправляется без проблем
                     res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            chat_id: CHAT_ID, 
-                            text: userCaption, 
-                            parse_mode: 'Markdown' 
-                        })
+                        body: JSON.stringify({ chat_id: CHAT_ID, text: userCaption, parse_mode: 'Markdown' })
                     });
                 }
-
                 const data = await res.json();
                 if (data.ok) {
                     status.style.color = '#34d399';
-                    status.textContent = '✅ Баг-репорт успешно доставлен!';
+                    status.textContent = '✅ Bug successfully dispatched to Telegram!';
                     document.getElementById('telegramBugForm').reset();
-                } else {
-                    throw new Error(data.description || "Telegram API error");
-                }
+                } else { throw new Error(); }
             } catch (err) {
-                // Если из-за CORS файл не прикрепился, пробуем отправить хотя бы текст баг-репорта
-                if (fileInput.files.length > 0) {
-                    try {
-                        const fallbackRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ 
-                                chat_id: CHAT_ID, 
-                                text: userCaption + "\n\n*(⚠️ Скриншот не был прикреплен из-за ограничений браузера)*", 
-                                parse_mode: 'Markdown' 
-                            })
-                        });
-                        const fallbackData = await fallbackRes.json();
-                        if (fallbackData.ok) {
-                            status.style.color = '#34d399';
-                            status.textContent = '✅ Текст отправлен (без картинки из-за CORS)!';
-                            document.getElementById('telegramBugForm').reset();
-                            return;
-                        }
-                    } catch (e) {}
-                }
-
                 status.style.color = '#f43f5e';
-                status.textContent = '❌ Ошибка отправки. Попробуйте отправить без файла.';
-                console.error(err);
+                status.textContent = '❌ Dispatch error. Try without image.';
             }
         };
-
     </script>
 
     <script>
@@ -630,39 +627,23 @@
             document.getElementById('navUserBadge').textContent = profile.role;
             document.getElementById('profRoleBadge').textContent = profile.role;
 
-            if (profile.isAdmin) {
+            if (profile.isAdmin || (profile.role === 'Admin' && profile.isApproved)) {
                 document.getElementById('adminTabBtn').classList.remove('hidden');
             } else {
                 document.getElementById('adminTabBtn').classList.add('hidden');
             }
 
             loadProfileTab();
+            window.renderRoleFeatures();
             switchTab('profile');
         }
 
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            
-            // Reset nav buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                if(!btn.id.includes('adminTabBtn')) {
-                    btn.className = "tab-btn px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 transition";
-                }
-            });
-
-            if (tabName === 'profile') {
-                document.getElementById('tabProfile').classList.remove('hidden');
-                document.getElementById('btnTabProfile').className = "tab-btn px-4 py-2 rounded-xl text-xs font-semibold transition bg-cyan-500/10 text-cyan-400 border border-cyan-500/20";
-            }
-            if (tabName === 'apps') {
-                document.getElementById('tabApps').classList.remove('hidden');
-                document.getElementById('btnTabApps').className = "tab-btn px-4 py-2 rounded-xl text-xs font-semibold transition bg-cyan-500/10 text-cyan-400 border border-cyan-500/20";
-            }
-            if (tabName === 'bugs') {
-                document.getElementById('tabBugs').classList.remove('hidden');
-                document.getElementById('btnTabBugs').className = "tab-btn px-4 py-2 rounded-xl text-xs font-semibold transition bg-rose-500/10 text-rose-400 border border-rose-500/20";
-            }
-            if (tabName === 'admin' && window.currentUserProfile?.isAdmin) {
+            if (tabName === 'profile') document.getElementById('tabProfile').classList.remove('hidden');
+            if (tabName === 'apps') document.getElementById('tabApps').classList.remove('hidden');
+            if (tabName === 'bugs') document.getElementById('tabBugs').classList.remove('hidden');
+            if (tabName === 'admin') {
                 document.getElementById('tabAdmin').classList.remove('hidden');
                 window.renderAdminTable();
             }
@@ -678,8 +659,7 @@
             document.getElementById('profileAvatarPreview').src = profile.avatar;
         }
 
-        function updateAvatarPreview() {
-            const url = document.getElementById('profAvatarUrl').value;
+        function checkSecurityAndPreviewProfile(url) {
             if(url) document.getElementById('profileAvatarPreview').src = url;
         }
     </script>
