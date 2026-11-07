@@ -529,7 +529,7 @@
             window.renderAdminTable();
         };
 
-        window.sendTelegramBug = async function(e) {
+                window.sendTelegramBug = async function(e) {
             e.preventDefault();
             const text = document.getElementById('bugText').value;
             const fileInput = document.getElementById('bugFile');
@@ -539,32 +539,70 @@
 
             status.style.color = "#38bdf8";
             status.textContent = 'Отправка в Telegram...';
+
             try {
                 let res;
+                // Если пользователь прикрепил фото, отправляем через метод sendPhoto с обходом CORS через публичный прокси (или только текст)
                 if (fileInput.files.length > 0) {
                     const fd = new FormData();
                     fd.append('chat_id', CHAT_ID);
                     fd.append('photo', fileInput.files[0]);
                     fd.append('caption', userCaption);
-                    res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd });
+                    
+                    res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { 
+                        method: 'POST', 
+                        body: fd 
+                    });
                 } else {
+                    // Чистый текст отправляется без проблем
                     res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ chat_id: CHAT_ID, text: userCaption, parse_mode: 'Markdown' })
+                        body: JSON.stringify({ 
+                            chat_id: CHAT_ID, 
+                            text: userCaption, 
+                            parse_mode: 'Markdown' 
+                        })
                     });
                 }
+
                 const data = await res.json();
                 if (data.ok) {
                     status.style.color = '#34d399';
-                    status.textContent = '✅ Баг-репорт отправлен!';
+                    status.textContent = '✅ Баг-репорт успешно доставлен!';
                     document.getElementById('telegramBugForm').reset();
-                } else { throw new Error(); }
+                } else {
+                    throw new Error(data.description || "Telegram API error");
+                }
             } catch (err) {
+                // Если из-за CORS файл не прикрепился, пробуем отправить хотя бы текст баг-репорта
+                if (fileInput.files.length > 0) {
+                    try {
+                        const fallbackRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ 
+                                chat_id: CHAT_ID, 
+                                text: userCaption + "\n\n*(⚠️ Скриншот не был прикреплен из-за ограничений браузера)*", 
+                                parse_mode: 'Markdown' 
+                            })
+                        });
+                        const fallbackData = await fallbackRes.json();
+                        if (fallbackData.ok) {
+                            status.style.color = '#34d399';
+                            status.textContent = '✅ Текст отправлен (без картинки из-за CORS)!';
+                            document.getElementById('telegramBugForm').reset();
+                            return;
+                        }
+                    } catch (e) {}
+                }
+
                 status.style.color = '#f43f5e';
-                status.textContent = '❌ Ошибка отправки.';
+                status.textContent = '❌ Ошибка отправки. Попробуйте отправить без файла.';
+                console.error(err);
             }
         };
+
     </script>
 
     <script>
