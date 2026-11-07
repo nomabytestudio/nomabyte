@@ -1,242 +1,134 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tester Dashboard — NomaByte Studio</title>
-  
-  <link rel="icon" type="image/png" href="/favicon.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-  <style>
-    body { font-family: 'Montserrat', sans-serif; background-color: #050608; color: #f1f5f9; }
-    .font-mono-code { font-family: 'JetBrains Mono', monospace; }
-  </style>
-</head>
-<body class="selection:bg-cyan-500/30 selection:text-cyan-300">
-
-  <!-- Шапка страницы кабинета -->
-  <header class="border-b border-slate-800 bg-[#050608] sticky top-0 z-40">
-    <div class="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
-      <a href="index.html" class="flex items-center gap-2 font-mono-code text-xs md:text-sm tracking-wider text-slate-300 hover:text-cyan-400 transition-colors">
-        <span>&larr;</span>
-        <span>Back to nomabyte.com</span>
-      </a>
-      <div class="font-mono-code text-xs text-amber-400 font-bold">
-        🔐 TESTER PORTAL
-      </div>
-    </div>
-  </header>
-
-  <!-- React Корень -->
-  <div id="dashboard-root"></div>
-
-  <!-- Логика кабинета тестера -->
-  <script type="text/babel">
-    const { useState, useEffect } = React;
-
-    // Список разрешенных тестеров (Способ 1)
-    const AUTHORIZED_TESTERS = [
-      { email: "josan.alexandr@icloud.com", password: "30112003" },
-      { email: "tester2@nomabyte.com", password: "noma2026_tester2" },
-      { email: "alex@nomabyte.com", password: "noma2026_admin" }
-    ];
-
-    function DashboardApp() {
-      const [authenticatedTester, setAuthenticatedTester] = useState(null);
-      const [loginInput, setLoginInput] = useState({ email: '', password: '' });
-      const [loginError, setLoginError] = useState(false);
-      const [bugSubmitted, setBugSubmitted] = useState(false);
-
-      // Проверяем, был ли пользователь уже авторизован в этой сессии
-      useEffect(() => {
-        const savedUser = sessionStorage.getItem('nomabyte_tester');
-        if (savedUser) setAuthenticatedTester(savedUser);
-      }, []);
-
-      const handleLogin = (e) => {
-        e.preventDefault();
-        const found = AUTHORIZED_TESTERS.find(
-          u => u.email.toLowerCase() === loginInput.email.toLowerCase() && u.password === loginInput.password
-        );
-        if (found) {
-          setAuthenticatedTester(found.email);
-          sessionStorage.setItem('nomabyte_tester', found.email);
-          setLoginError(false);
-        } else {
-          setLoginError(true);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NomaByte Dashboard - Bug Tracker</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-      };
+        .card {
+            background-color: #1e293b;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 450px;
+        }
+        h2 { margin-top: 0; color: #38bdf8; }
+        label { display: block; margin-bottom: 8px; font-size: 14px; color: #94a3b8; }
+        textarea, input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            color: #fff;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        textarea { resize: vertical; height: 100px; }
+        button {
+            background-color: #0284c7;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover { background-color: #0369a1; }
+        .status { margin-top: 15px; text-align: center; font-size: 14px; }
+    </style>
+</head>
+<body>
 
-      const handleLogout = () => {
-        setAuthenticatedTester(null);
-        sessionStorage.removeItem('nomabyte_tester');
-      };
+    <div class="card">
+        <h2>🐛 Сообщить об ошибке</h2>
+        <form id="bugForm">
+            <label for="bugDescription">Опишите проблему:</label>
+            <textarea id="bugDescription" placeholder="Что пошло не так?..." required></textarea>
 
-      if (!authenticatedTester) {
-        return (
-          <div class="max-w-md mx-auto px-6 py-16">
-            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl">
-              <div class="text-center mb-6">
-                <h2 class="text-2xl font-bold text-white mb-1">Tester Authorization</h2>
-                <p class="text-xs text-slate-400 font-mono-code">Enter your credentials provided by NomaByte Studio</p>
-              </div>
+            <label for="bugScreenshot">Прикрепить скриншот (необязательно):</label>
+            <input type="file" id="bugScreenshot" accept="image/*">
 
-              <form onSubmit={handleLogin} class="space-y-4">
-                <div>
-                  <label class="block font-mono-code text-xs text-slate-400 mb-1">EMAIL / LOGIN</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="tester1@nomabyte.com"
-                    value={loginInput.email}
-                    onChange={(e) => setLoginInput({ ...loginInput, email: e.target.value })}
-                    class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-sm focus:outline-none focus:border-amber-500"
-                  />
-                </div>
+            <button type="submit" id="submitBtn">Отправить в Telegram</button>
+        </form>
+        <div id="statusMessage" class="status"></div>
+    </div>
 
-                <div>
-                  <label class="block font-mono-code text-xs text-slate-400 mb-1">PASSWORD</label>
-                  <input
-                    type="password"
-                    required
-                    placeholder="••••••••"
-                    value={loginInput.password}
-                    onChange={(e) => setLoginInput({ ...loginInput, password: e.target.value })}
-                    class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-sm focus:outline-none focus:border-amber-500"
-                  />
-                </div>
+    <script>
+        const BOT_TOKEN = '9276816295:AAHCW8XsdT2FMHT2zt_h_qs77pNFE_f4lAC'; //[span_2](start_span)[span_2](end_span)
+        const CHAT_ID = '5044411049'; //
 
-                {loginError && (
-                  <div class="p-3 rounded-xl bg-rose-950/60 border border-rose-500/50 text-rose-300 text-xs font-mono-code text-center">
-                    ✕ Invalid Login or Password.
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  class="w-full py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm transition-all font-mono-code shadow-lg shadow-amber-500/20"
-                >
-                  SIGN IN TO PORTAL →
-                </button>
-              </form>
-            </div>
-          </div>
-        );
-      }
-
-      return (
-        <div class="max-w-4xl mx-auto px-6 py-12 space-y-8">
-          {/* Инфо профиля */}
-          <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-between shadow-lg">
-            <div>
-              <span class="text-xs font-mono-code text-emerald-400">// AUTHORIZED TESTER SESSION</span>
-              <h2 class="text-xl font-bold text-white">{authenticatedTester}</h2>
-            </div>
-            <button
-              onClick={handleLogout}
-              class="px-4 py-2 rounded-xl border border-slate-700 hover:border-slate-600 text-xs font-mono-code text-slate-400 hover:text-white transition-all"
-            >
-              LOGOUT
-            </button>
-          </div>
-
-          {/* Ссылки на скачивание сборок */}
-          <div class="space-y-4">
-            <h3 class="text-base font-bold text-white font-mono-code">// 📲 Available Beta Builds</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
-                <div>
-                  <div class="font-bold text-white text-sm">Vodičák SK (v1.3-beta)</div>
-                  <div class="text-xs text-slate-500 font-mono-code mt-0.5">Android APK • Build 104</div>
-                </div>
-                <a
-                  href="https://play.google.com/store/apps/details?id=sk.vodicak.vodicaksk"
-                  target="_blank"
-                  class="px-4 py-2 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-xs font-mono-code font-bold hover:bg-cyan-500/30 transition-all"
-                >
-                  Download
-                </a>
-              </div>
-
-              <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-between opacity-75">
-                <div>
-                  <div class="font-bold text-white text-sm">Project X (Alpha)</div>
-                  <div class="text-xs text-slate-500 font-mono-code mt-0.5">iOS TestFlight</div>
-                </div>
-                <span class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 text-xs font-mono-code">Coming Soon</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Форма отправки багов с файлами */}
-          <div class="space-y-4 pt-4">
-            <h3 class="text-base font-bold text-white font-mono-code">// 🐛 Send Bug Report / Feedback</h3>
+        document.getElementById('bugForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
             
-            <form
-              action="https://formspree.io/f/mwlvypbn"
-              method="POST"
-              encType="multipart/form-data"
-              onSubmit={() => { setBugSubmitted(true); setTimeout(() => setBugSubmitted(false), 5000); }}
-              class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-5"
-            >
-              <input type="hidden" name="subject" value={`🐛 BUG REPORT from tester: ${authenticatedTester}`} />
-              <input type="hidden" name="tester_email" value={authenticatedTester} />
+            const description = document.getElementById('bugDescription').value;
+            const fileInput = document.getElementById('bugScreenshot');
+            const submitBtn = document.getElementById('submitBtn');
+            const statusDiv = document.getElementById('statusMessage');
 
-              <div>
-                <label class="block font-mono-code text-xs text-slate-400 mb-1">SELECT APPLICATION</label>
-                <select name="app_name" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-sm focus:outline-none">
-                  <option>Vodičák SK (v1.3-beta)</option>
-                  <option>Project X (Alpha)</option>
-                  <option>General Studio Feedback</option>
-                </select>
-              </div>
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Отправка...';
+            statusDiv.textContent = '';
 
-              <div>
-                <label class="block font-mono-code text-xs text-slate-400 mb-1">ISSUE DESCRIPTION & STEPS TO REPRODUCE</label>
-                <textarea
-                  name="bug_description"
-                  rows="4"
-                  required
-                  placeholder="Describe what happened, error message, or UI bug..."
-                  class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-sm focus:outline-none resize-none"
-                ></textarea>
-              </div>
+            try {
+                let response;
+                
+                if (fileInput.files.length > 0) {
+                    // Если пользователь прикрепил скриншот
+                    const formData = new FormData();
+                    formData.append('chat_id', CHAT_ID);
+                    formData.append('photo', fileInput.files[0]);
+                    formData.append('caption', `🐛 **Новый баг-репорт:**\n\n${description}`);
 
-              <div>
-                <label class="block font-mono-code text-xs text-slate-400 mb-1">ATTACH SCREENSHOT / LOG (OPTIONAL)</label>
-                <input
-                  type="file"
-                  name="screenshot_attachment"
-                  accept="image/*"
-                  class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-mono-code file:bg-slate-800 file:text-cyan-400 hover:file:bg-slate-700 cursor-pointer"
-                />
-              </div>
+                    response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                } else {
+                    // Если только текст
+                    response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            chat_id: CHAT_ID,
+                            text: `🐛 **Новый баг-репорт:**\n\n${description}`,
+                            parse_mode: 'Markdown'
+                        })
+                    });
+                }
 
-              <button
-                type="submit"
-                class="w-full py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm font-mono-code transition-all shadow-lg shadow-cyan-500/20"
-              >
-                SUBMIT REPORT TO DEVELOPERS →
-              </button>
+                const data = await response.json();
 
-              {bugSubmitted && (
-                <div class="p-4 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-emerald-300 text-xs font-mono-code text-center">
-                  ✓ Bug report and attachments successfully sent to NomaByte Studio!
-                </div>
-              )}
-            </form>
-          </div>
-        </div>
-      );
-    }
-
-    ReactDOM.createRoot(document.getElementById('dashboard-root')).render(<DashboardApp />);
-  </script>
+                if (data.ok) {
+                    statusDiv.style.color = '#4ade80';
+                    statusDiv.textContent = '✅ Баг успешно отправлен в Telegram!';
+                    document.getElementById('bugForm').reset();
+                } else {
+                    throw new Error(data.description || 'Ошибка сервера Telegram');
+                }
+            } catch (error) {
+                console.error(error);
+                statusDiv.style.color = '#f87171';
+                statusDiv.textContent = '❌ Ошибка при отправке. Попробуйте еще раз.';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Отправить в Telegram';
+            }
+        });
+    </script>
 </body>
 </html>
