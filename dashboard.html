@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NomaByte - Firebase Executive Dashboard</title>
+    <title>NomaByte - Tester Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -17,17 +17,20 @@
     <!-- Navbar -->
     <nav class="glass sticky top-0 z-50 border-b border-gray-800 px-6 py-3 flex justify-between items-center">
         <div class="flex items-center space-x-3">
-            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-cyan-500/30">N</div>
-            <span class="font-bold text-lg tracking-wide text-white">NomaByte <span class="text-xs px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">Cloud Hub</span></span>
+            <a href="index.html" class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-cyan-500/30">N</a>
+            <span class="font-bold text-lg tracking-wide text-white">NomaByte <span class="text-xs px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">Tester Hub</span></span>
         </div>
         
-        <div id="navUserArea" class="hidden flex items-center space-x-4">
-            <div class="flex items-center space-x-3 bg-gray-800/60 px-3 py-1.5 rounded-full border border-gray-700">
-                <img id="navAvatar" class="w-7 h-7 rounded-full object-cover" src="" alt="Avatar">
-                <span id="navUserName" class="text-sm font-medium text-gray-200">User</span>
-                <span id="navUserBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 font-semibold uppercase">Role</span>
+        <div class="flex items-center space-x-4">
+            <a href="index.html" class="text-gray-400 hover:text-white text-sm transition"><i class="fa-solid fa-house mr-1"></i> На главную</a>
+            <div id="navUserArea" class="hidden flex items-center space-x-4 border-l border-gray-700 pl-4">
+                <div class="flex items-center space-x-3 bg-gray-800/60 px-3 py-1.5 rounded-full border border-gray-700">
+                    <img id="navAvatar" class="w-7 h-7 rounded-full object-cover" src="" alt="Avatar">
+                    <span id="navUserName" class="text-sm font-medium text-gray-200">User</span>
+                    <span id="navUserBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 font-semibold uppercase">Role</span>
+                </div>
+                <button onclick="logout()" class="text-gray-400 hover:text-red-400 text-sm transition"><i class="fa-solid fa-right-from-bracket"></i></button>
             </div>
-            <button onclick="logout()" class="text-gray-400 hover:text-red-400 text-sm transition"><i class="fa-solid fa-right-from-bracket"></i> Выход</button>
         </div>
     </nav>
 
@@ -51,7 +54,7 @@
                     <label class="text-xs text-gray-400 mb-1 block">Пароль</label>
                     <input type="password" id="loginPassword" required class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-cyan-500 outline-none">
                 </div>
-                <button type="submit" id="loginSubmitBtn" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-2.5 rounded-lg transition shadow-lg shadow-cyan-600/30">Войти через Firebase</button>
+                <button type="submit" id="loginSubmitBtn" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-2.5 rounded-lg transition shadow-lg shadow-cyan-600/30">Войти в панель</button>
             </form>
 
             <!-- Register Form -->
@@ -68,33 +71,33 @@
                     <label class="text-xs text-gray-400 mb-1 block">Пароль</label>
                     <input type="password" id="regPassword" required class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-cyan-500 outline-none">
                 </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-xs text-gray-400 mb-1 block">Страна</label>
-                        <select id="regCountry" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-gray-300 outline-none">
-                            <option value="🇸🇰 Словакия">🇸🇰 Словакия</option>
-                            <option value="🇺🇦 Украина">🇺🇦 Украина</option>
-                            <option value="🇷🇺 Россия">🇷🇺 Россия</option>
-                            <option value="🇷🇴 Румыния">🇷🇴 Румыния</option>
-                            <option value="🇨🇿 Чехия">🇨🇿 Чехия</option>
-                            <option value="🇬🇪 Грузия">🇬🇪 Грузия</option>
-                            <option value="🇺🇿 Узбекистан">🇺🇿 Узбекистан</option>
-                            <option value="🇰🇿 Казахстан">🇰🇿 Казахстан</option>
-                        </select>
+                
+                <!-- Поиск страны с лупой -->
+                <div>
+                    <label class="text-xs text-gray-400 mb-1 block">Страна (поиск по названию / search country)</label>
+                    <div class="relative mb-1">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                        </span>
+                        <input type="text" id="countrySearch" placeholder="🔍 Slovakia, Ukraine..." oninput="filterCountries()" class="w-full bg-gray-900 border border-gray-700 rounded-lg pl-9 pr-3 py-2 text-sm text-white outline-none focus:border-cyan-500">
                     </div>
-                    <div>
-                        <label class="text-xs text-gray-400 mb-1 block">Язык UI</label>
-                        <select id="regLang" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-gray-300 outline-none">
-                            <option value="ru">Русский</option>
-                            <option value="en">English</option>
-                            <option value="sk">Slovenčina</option>
-                            <option value="uk">Українська</option>
-                            <option value="ro">Română</option>
-                            <option value="ka">ქართული</option>
-                            <option value="uz">O'zbek</option>
-                            <option value="kk">Қазақша</option>
-                        </select>
-                    </div>
+                    <select id="regCountry" size="3" class="w-full bg-gray-900 border border-gray-700 rounded-lg text-sm text-gray-200 outline-none p-1">
+                        <!-- Заполняется JS -->
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-xs text-gray-400 mb-1 block">Язык интерфейса UI</label>
+                    <select id="regLang" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-gray-300 outline-none">
+                        <option value="ru">Русский (RU)</option>
+                        <option value="en">English (EN)</option>
+                        <option value="sk">Slovenčina (SK)</option>
+                        <option value="uk">Українська (UK)</option>
+                        <option value="ro">Română (RO)</option>
+                        <option value="ka">ქართული (KA)</option>
+                        <option value="uz">O'zbek (UZ)</option>
+                        <option value="kk">Қазақша (KK)</option>
+                    </select>
                 </div>
                 <button type="submit" id="regSubmitBtn" class="w-full bg-green-600 hover:bg-green-500 text-white font-semibold py-2.5 rounded-lg transition shadow-lg shadow-green-600/30">Зарегистрироваться</button>
             </form>
@@ -102,32 +105,31 @@
         </div>
     </div>
 
-    <!-- MAIN DASHBOARD APP CONTAINER -->
+    <!-- MAIN APP CONTAINER -->
     <div id="appContainer" class="hidden flex-1 p-6 max-w-7xl mx-auto w-full space-y-6">
         
-        <!-- Header Controls -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-800 pb-4">
             <div>
-                <h1 class="text-2xl font-bold text-white">Рабочая Панель NomaByte</h1>
-                <p class="text-sm text-gray-400">Связь с облаком Firebase Firestore (`azbuka-sk`)</p>
+                <h1 class="text-2xl font-bold text-white">Панель Тестера NomaByte</h1>
+                <p class="text-sm text-gray-400">Firebase Cloud Database (`azbuka-sk`)</p>
             </div>
             <div class="flex space-x-2">
                 <button onclick="switchTab('profile')" class="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-sm font-medium border border-gray-700 transition"><i class="fa-solid fa-user-gear mr-2"></i>Профиль</button>
                 <button onclick="switchTab('apps')" class="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-sm font-medium border border-gray-700 transition"><i class="fa-solid fa-mobile-screen mr-2"></i>Приложения</button>
-                <button onclick="switchTab('bugs')" class="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-sm font-medium border border-gray-700 transition"><i class="fa-solid fa-bug mr-2 text-red-400"></i>Баг-Трекер</button>
+                <button onclick="switchTab('bugs')" class="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-sm font-medium border border-gray-700 transition"><i class="fa-solid fa-bug mr-2 text-red-400"></i>Баг-Репорт</button>
                 <button id="adminTabBtn" onclick="switchTab('admin')" class="hidden px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-sm font-semibold text-white shadow-lg transition"><i class="fa-solid fa-shield-halved mr-2"></i>Админка</button>
             </div>
         </div>
 
-        <!-- TAB 1: PROFILE SETTINGS -->
+        <!-- TAB 1: PROFILE -->
         <div id="tabProfile" class="tab-content space-y-6">
             <div class="glass p-6 rounded-2xl max-w-2xl mx-auto space-y-6">
-                <h2 class="text-xl font-bold text-cyan-400 border-b border-gray-800 pb-3">Настройки Профиля в Cloud Firestore</h2>
+                <h2 class="text-xl font-bold text-cyan-400 border-b border-gray-800 pb-3">Настройки Профиля</h2>
                 
                 <div class="flex items-center space-x-6">
                     <img id="profileAvatarPreview" class="w-20 h-20 rounded-full object-cover border-2 border-cyan-500 shadow-lg" src="" alt="Avatar">
                     <div class="space-y-2 flex-1">
-                        <label class="text-xs text-gray-400 block">Ссылка на фото/аватарку (URL)</label>
+                        <label class="text-xs text-gray-400 block">Ссылка на аватарку (URL)</label>
                         <input type="text" id="profAvatarUrl" oninput="updateAvatarPreview()" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-1.5 text-sm text-gray-300 focus:border-cyan-500 outline-none">
                     </div>
                 </div>
@@ -138,38 +140,29 @@
                         <input type="text" id="profName" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white">
                     </div>
                     <div>
-                        <label class="text-xs text-gray-400 mb-1 block">Должность (Назначает Главный Админ)</label>
+                        <label class="text-xs text-gray-400 mb-1 block">Должность (Назначает Админ)</label>
                         <input type="text" id="profRole" disabled class="w-full bg-gray-800/50 border border-gray-800 text-gray-400 rounded-lg px-3 py-2 text-sm cursor-not-allowed">
                     </div>
                     <div>
                         <label class="text-xs text-gray-400 mb-1 block">Страна</label>
-                        <select id="profCountry" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200">
-                            <option value="🇸🇰 Словакия">🇸🇰 Словакия</option>
-                            <option value="🇺🇦 Украина">🇺🇦 Украина</option>
-                            <option value="🇷🇺 Россия">🇷🇺 Россия</option>
-                            <option value="🇷🇴 Румыния">🇷🇴 Румыния</option>
-                            <option value="🇨🇿 Чехия">🇨🇿 Чехия</option>
-                            <option value="🇬🇪 Грузия">🇬🇪 Грузия</option>
-                            <option value="🇺🇿 Узбекистан">🇺🇿 Узбекистан</option>
-                            <option value="🇰🇿 Казахстан">🇰🇿 Казахстан</option>
-                        </select>
+                        <input type="text" id="profCountry" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white">
                     </div>
                     <div>
-                        <label class="text-xs text-gray-400 mb-1 block">Язык Интерфейса Приложения</label>
+                        <label class="text-xs text-gray-400 mb-1 block">Язык интерфейса</label>
                         <select id="profLang" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200">
-                            <option value="ru">Русский 🇷🇺</option>
-                            <option value="en">English 🇬🇧</option>
-                            <option value="sk">Slovenčina 🇸🇰</option>
-                            <option value="uk">Українська 🇺🇦</option>
-                            <option value="ro">Română 🇷🇴</option>
-                            <option value="ka">ქართული 🇬🇪</option>
-                            <option value="uz">O'zbek 🇺🇿</option>
-                            <option value="kk">Қазақша 🇰🇿</option>
+                            <option value="ru">Русский (RU)</option>
+                            <option value="en">English (EN)</option>
+                            <option value="sk">Slovenčina (SK)</option>
+                            <option value="uk">Українська (UK)</option>
+                            <option value="ro">Română (RO)</option>
+                            <option value="ka">ქართული (KA)</option>
+                            <option value="uz">O'zbek (UZ)</option>
+                            <option value="kk">Қазақша (KK)</option>
                         </select>
                     </div>
                 </div>
 
-                <button onclick="saveProfile()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-2.5 rounded-lg transition">Сохранить в Firebase</button>
+                <button onclick="saveProfile()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-2.5 rounded-lg transition">Сохранить изменения</button>
             </div>
         </div>
 
@@ -178,32 +171,32 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="glass-card p-6 rounded-2xl border border-gray-800">
                     <h3 class="text-lg font-bold text-white mb-1">Azbuka SK (SlovoGo)</h3>
-                    <p class="text-sm text-gray-400 mb-4">250 уроков A1-C1 на 8 языках интерфейса.</p>
+                    <p class="text-sm text-gray-400 mb-4">250 уроков словацкого языка (A1-C1) на 8 языках.</p>
                 </div>
                 <div class="glass-card p-6 rounded-2xl border border-gray-800">
                     <h3 class="text-lg font-bold text-white mb-1">Vodičák SK</h3>
-                    <p class="text-sm text-gray-400 mb-4">Симулятор экзаменационных тестов словацкой автошколы.</p>
+                    <p class="text-sm text-gray-400 mb-4">Симулятор экзаменационных тестов ПДД Словакии.</p>
                 </div>
             </div>
         </div>
 
-        <!-- TAB 3: TELEGRAM BUGS -->
+        <!-- TAB 3: BUGS -->
         <div id="tabBugs" class="tab-content hidden">
             <div class="glass p-6 rounded-2xl max-w-xl mx-auto space-y-4">
-                <h2 class="text-lg font-bold text-white border-b border-gray-800 pb-3">Отправка Отчета о Баге</h2>
+                <h2 class="text-lg font-bold text-white border-b border-gray-800 pb-3">Отправка Баг-Репорта в Telegram</h2>
                 <form id="telegramBugForm" onsubmit="sendTelegramBug(event)" class="space-y-4">
-                    <textarea id="bugText" required rows="4" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm text-gray-200 outline-none" placeholder="Что сломалось?"></textarea>
+                    <textarea id="bugText" required rows="4" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm text-gray-200 outline-none" placeholder="Опишите проблему..."></textarea>
                     <input type="file" id="bugFile" accept="image/*" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-sm text-gray-400">
-                    <button type="submit" id="bugSubmitBtn" class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-semibold py-2.5 rounded-lg shadow-lg">Отправить в Telegram (@NomaByteBot)</button>
+                    <button type="submit" id="bugSubmitBtn" class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-semibold py-2.5 rounded-lg shadow-lg">Отправить в Telegram</button>
                 </form>
                 <div id="bugStatus" class="text-center text-sm font-medium"></div>
             </div>
         </div>
 
-        <!-- TAB 4: ADMIN PANEL -->
+        <!-- TAB 4: ADMIN -->
         <div id="tabAdmin" class="tab-content hidden space-y-6">
             <div class="glass p-6 rounded-2xl border border-purple-500/30 space-y-6">
-                <h2 class="text-xl font-bold text-purple-400 border-b border-gray-800 pb-4">Управление Пользователями Firebase</h2>
+                <h2 class="text-xl font-bold text-purple-400 border-b border-gray-800 pb-4">Панель Администратора</h2>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm text-gray-300">
                         <thead class="bg-gray-900/80 text-xs uppercase text-gray-400">
@@ -224,15 +217,14 @@
 
     </div>
 
-    <!-- FIREBASE SDKs -->
+    <!-- SCRIPT & FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, getDocs, collection, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // КЛЮЧИ ИЗ ТВОЕГО СКРИНШОТА
         const firebaseConfig = {
-            apiKey: "AIzaSyBOglBddyg2fgnXk1nDwaSvpzWF9NyESs",
+            apiKey: "AIzaSyBYOgLBddYg2fgnXk1nDWaSvpzWF9NyESs",
             authDomain: "azbuka-sk.firebaseapp.com",
             projectId: "azbuka-sk",
             storageBucket: "azbuka-sk.firebasestorage.app",
@@ -251,20 +243,54 @@
         window.currentFirebaseUser = null;
         window.currentUserProfile = null;
 
-        // Отслеживание входа
+        const countriesList = [
+            "🇸🇰 Slovakia (Словакия)", "🇺🇦 Ukraine (Украина)", "🇷🇺 Russia (Россия)", 
+            "🇨🇿 Czech Republic (Чехия)", "🇷🇴 Romania (Румыния)", "🇬🇪 Georgia (Грузия)", 
+            "🇺🇿 Uzbekistan (Узбекистан)", "🇰🇿 Kazakhstan (Казахстан)", "🇬🇧 United Kingdom (Великобритания)", 
+            "🇩🇪 Germany (Германия)", "🇵🇱 Poland (Польша)", "🇦🇹 Austria (Австрия)", 
+            "🇫🇷 France (Франция)", "🇮🇹 Italy (Италия)", "🇪🇸 Spain (Испания)", "🇺🇸 United States (США)"
+        ];
+
+        window.populateCountries = function(filter = "") {
+            const select = document.getElementById('regCountry');
+            if(!select) return;
+            select.innerHTML = '';
+            const filtered = countriesList.filter(c => c.toLowerCase().includes(filter.toLowerCase()));
+            filtered.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c;
+                opt.textContent = c;
+                select.appendChild(opt);
+            });
+            if(filtered.length > 0) select.selectedIndex = 0;
+        };
+
+        window.filterCountries = function() {
+            const query = document.getElementById('countrySearch').value;
+            window.populateCountries(query);
+        };
+
+        window.onload = function() {
+            window.populateCountries();
+        };
+
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 window.currentFirebaseUser = user;
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                if (userDoc.exists()) {
-                    window.currentUserProfile = userDoc.data();
-                    if (window.currentUserProfile.isBlocked) {
-                        alert("⚠️ Ваш аккаунт заблокирован Администратором!");
-                        await signOut(auth);
-                        showAuth();
-                        return;
+                try {
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    if (userDoc.exists()) {
+                        window.currentUserProfile = userDoc.data();
+                        if (window.currentUserProfile.isBlocked) {
+                            alert("⚠️ Ваш аккаунт заблокирован Администратором!");
+                            await signOut(auth);
+                            showAuth();
+                            return;
+                        }
+                        showApp();
                     }
-                    showApp();
+                } catch (e) {
+                    console.error("Firestore error:", e);
                 }
             } else {
                 window.currentFirebaseUser = null;
@@ -273,16 +299,11 @@
             }
         });
 
-        // Вход
         window.handleLogin = async function(e) {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;
             const pass = document.getElementById('loginPassword').value;
-            const btn = document.getElementById('loginSubmitBtn');
             const status = document.getElementById('authStatus');
-
-            btn.disabled = true;
-            status.textContent = "Проверка Firebase...";
 
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
@@ -290,31 +311,23 @@
             } catch (err) {
                 status.style.color = "#f87171";
                 status.textContent = "❌ Ошибка входа: " + err.message;
-            } finally {
-                btn.disabled = false;
             }
         };
 
-        // Регистрация
         window.handleRegister = async function(e) {
             e.preventDefault();
             const email = document.getElementById('regEmail').value;
             const pass = document.getElementById('regPassword').value;
             const name = document.getElementById('regName').value;
-            const country = document.getElementById('regCountry').value;
+            const countrySelect = document.getElementById('regCountry');
+            const country = countrySelect.options[countrySelect.selectedIndex]?.value || "Slovakia";
             const lang = document.getElementById('regLang').value;
-            const btn = document.getElementById('regSubmitBtn');
             const status = document.getElementById('authStatus');
-
-            btn.disabled = true;
-            status.textContent = "Создание пользователя...";
 
             try {
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
                 const uid = res.user.uid;
-
-                // Супер-админ статус для главного аккаунта
-                const isAdmin = email.toLowerCase() === 'admin@nomabyte.sk' || email.toLowerCase().includes('noma');
+                const isAdmin = email.toLowerCase().includes('admin') || email.toLowerCase().includes('josan') || email.toLowerCase().includes('noma');
 
                 const profileData = {
                     uid: uid,
@@ -330,25 +343,20 @@
 
                 await setDoc(doc(db, "users", uid), profileData);
                 window.currentUserProfile = profileData;
-                status.textContent = "";
+                showApp();
             } catch (err) {
                 status.style.color = "#f87171";
-                status.textContent = "❌ Ошибка регистрации: " + err.message;
-            } finally {
-                btn.disabled = false;
+                status.textContent = "❌ Ошибка: " + err.message;
             }
         };
 
-        // Выход
         window.logout = async function() {
             await signOut(auth);
         };
 
-        // Сохранение профиля
         window.saveProfile = async function() {
             if (!window.currentFirebaseUser) return;
             const uid = window.currentFirebaseUser.uid;
-
             const updatedData = {
                 name: document.getElementById('profName').value,
                 country: document.getElementById('profCountry').value,
@@ -360,16 +368,16 @@
                 await updateDoc(doc(db, "users", uid), updatedData);
                 window.currentUserProfile = { ...window.currentUserProfile, ...updatedData };
                 showApp();
-                alert("Данные профиля успешно сохранены в Firebase!");
+                alert("Профиль успешно сохранен!");
             } catch (err) {
-                alert("Ошибка сохранения: " + err.message);
+                alert("Ошибка: " + err.message);
             }
         };
 
-        // Админка
         window.renderAdminTable = async function() {
             const querySnapshot = await getDocs(collection(db, "users"));
             const tbody = document.getElementById('adminUserTable');
+            if(!tbody) return;
             tbody.innerHTML = '';
 
             querySnapshot.forEach((docSnap) => {
@@ -387,9 +395,7 @@
                         <input type="text" value="${u.role}" onchange="window.updateUserRole('${u.uid}', this.value)" ${u.isAdmin ? 'disabled' : ''} class="bg-gray-900 border border-gray-700 rounded px-2 py-1 text-xs text-cyan-300">
                     </td>
                     <td class="p-3">
-                        ${u.isBlocked 
-                            ? '<span class="px-2 py-0.5 rounded bg-red-500/20 text-red-400 text-xs">Заблокирован</span>' 
-                            : '<span class="px-2 py-0.5 rounded bg-green-500/20 text-green-400 text-xs">Активен</span>'}
+                        ${u.isBlocked ? '<span class="px-2 py-0.5 rounded bg-red-500/20 text-red-400 text-xs">Заблокирован</span>' : '<span class="px-2 py-0.5 rounded bg-green-500/20 text-green-400 text-xs">Активен</span>'}
                     </td>
                     <td class="p-3 text-right space-x-2">
                         ${!u.isAdmin ? `
@@ -412,20 +418,15 @@
             window.renderAdminTable();
         };
 
-        // Отправка в Telegram
         window.sendTelegramBug = async function(e) {
             e.preventDefault();
             const text = document.getElementById('bugText').value;
             const fileInput = document.getElementById('bugFile');
             const status = document.getElementById('bugStatus');
-            const btn = document.getElementById('bugSubmitBtn');
-
-            btn.disabled = true;
-            status.textContent = 'Отправка в Telegram...';
-
             const profile = window.currentUserProfile || {};
-            const userCaption = `🐛 **Баг из облака Firebase:**\n👤 Пользователь: ${profile.name || 'Аноним'}\n📧 Email: ${profile.email || '—'}\n💼 Должность: ${profile.role || '—'}\n\n📝 **Описание:**\n${text}`;
+            const userCaption = `🐛 **Баг-репорт:**\n👤 ${profile.name || 'User'}\n📧 ${profile.email || '—'}\n💼 ${profile.role || '—'}\n\n📝 ${text}`;
 
+            status.textContent = 'Отправка...';
             try {
                 let res;
                 if (fileInput.files.length > 0) {
@@ -444,16 +445,12 @@
                 const data = await res.json();
                 if (data.ok) {
                     status.style.color = '#4ade80';
-                    status.textContent = '✅ Сообщение доставлено администратору в Telegram!';
+                    status.textContent = '✅ Доставлено в Telegram!';
                     document.getElementById('telegramBugForm').reset();
-                } else {
-                    throw new Error();
-                }
+                } else { throw new Error(); }
             } catch (err) {
                 status.style.color = '#f87171';
-                status.textContent = '❌ Ошибка отправки в Telegram.';
-            } finally {
-                btn.disabled = false;
+                status.textContent = '❌ Ошибка отправки.';
             }
         };
     </script>
