@@ -331,7 +331,6 @@
       const [lang, setLang] = useState('EN');
       const [rainOn, setRainOn] = useState(true);
       const [showBetaModal, setShowBetaModal] = useState(false);
-      const [showPrivacy, setShowPrivacy] = useState(false);
 
       const [selectedAnswer, setSelectedAnswer] = useState(null);
       const [loadingContact, setLoadingContact] = useState(false);
@@ -800,36 +799,12 @@
             </div>
           )}
 
-          {/* Privacy Policy */}
-          {showPrivacy && (
-            <div class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-              <div class="bg-slate-900 border border-slate-800 max-w-2xl w-full max-h-[85vh] rounded-3xl p-6 md:p-8 overflow-y-auto relative shadow-2xl">
-                <button
-                  onClick={() => setShowPrivacy(false)}
-                  class="absolute top-6 right-6 w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center font-mono-code font-bold"
-                >
-                  ✕
-                </button>
-                <h2 class="text-2xl font-bold text-white mb-2">Zásady ochrany osobných údajov</h2>
-                <div class="text-xs font-mono-code text-cyan-400 mb-6">Aplikácia: Vodičák SK | Vývojár: NomaByte Studio</div>
-                <div class="text-slate-300 text-sm space-y-4 leading-relaxed">
-                  <p>Aplikácia Vodičák SK rešpektuje vaše súkromie. Používame anonymnú autentifikáciu cez Firebase Authentication a ukladáme anonymné dáta pokroku v testoch.</p>
-                  <p>Tretie strany (Google AdMob, Firebase Analytics) môžu zhromažďovať anonymné dáta na účely reklamy a analýzy pádu aplikácie.</p>
-                  <p>Kontakt: <a href="mailto:nomabyte@gmail.com" class="text-cyan-400">nomabyte@gmail.com</a></p>
-                </div>
-                <div class="mt-8 text-center">
-                  <button onClick={() => setShowPrivacy(false)} class="px-6 py-2 rounded-xl bg-cyan-500 text-slate-950 font-bold text-xs font-mono-code">Zavrieť</button>
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* Footer */}
           <footer class="border-t border-slate-800/80 py-8 bg-[#030406]">
             <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 font-mono-code text-xs text-slate-500">
               <div>© 2026 NomaByte Studio. All rights reserved.</div>
               <div class="flex items-center gap-6">
-                <button onClick={() => setShowPrivacy(true)} class="hover:text-cyan-400 transition-colors">Privacy Policy</button>
+                <a href="Privacypolicy.html" class="hover:text-cyan-400 transition-colors">Privacy Policy</a>
                 <span>•</span>
                 <a href="https://t.me/nomabytestudio" target="_blank" class="hover:text-cyan-400 transition-colors">Telegram</a>
                 <span>•</span>
