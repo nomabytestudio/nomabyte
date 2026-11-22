@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Services & Story — NomaByte Studio</title>
+  
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    body { font-family: 'Montserrat', sans-serif; background-color: #050608; color: #f1f5f9; overflow-x: hidden; }
+    .font-mono-code { font-family: 'JetBrains Mono', monospace; }
+
+    .glass-card {
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(51, 65, 85, 0.75);
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 25px rgba(6, 182, 212, 0.12); }
+      50% { box-shadow: 0 0 40px rgba(6, 182, 212, 0.28); }
+    }
+    .glow-box { animation: pulseGlow 5s ease-in-out infinite; }
+  </style>
+</head>
+<body class="selection:bg-cyan-500/30 selection:text-cyan-300">
+
+  <div id="services-root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const content = {
+      EN: {
+        backHome: "Back to Home",
+        badge: "SERVICES • CASE STUDIES • STUDIO STORY",
+        heroTitle1: "Build Your Next",
+        heroTitle2: "Digital Product",
+        heroSub: "From cross-platform iOS & Android apps to modern web portals, custom scripts, and expert technical consulting.",
+        ctaOrder: "Order a Project ↓",
+        ctaStory: "Our Story & Apps",
+
+        // Услуги
+        servicesTag: "// WHAT WE BUILD",
+        servicesTitle: "Services & Solutions",
+        servicesDesc: "Click any service below to pre-select it in the order form.",
+        services: [
+          {
+            id: "Mobile App (iOS & Android)",
+            icon: "📱",
+            tag: "FLUTTER & DART",
+            title: "Mobile App Development",
+            desc: "Full-cycle cross-platform mobile applications for Android & iOS with offline support, push notifications, AdMob, and store publishing.",
+            price: "From $150"
+          },
+          {
+            id: "Website / Web Platform",
+            icon: "🌐",
+            tag: "REACT & TAILWIND",
+            title: "Websites & Web Portals",
+            desc: "High-speed landing pages, studio portfolios, interactive dashboards, and web applications deployed on Vercel / Firebase.",
+            price: "From $80"
+          },
+          {
+            id: "Custom Software & Automation",
+            icon: "⚙️",
+            tag: "PYTHON & BOTS",
+            title: "Custom Software & Scripts",
+            desc: "Telegram bots, data parsers, workflow automation tools, and custom desktop utilities tailored to your business needs.",
+            price: "From $60"
+          },
+          {
+            id: "IT Consultation & Store Launch",
+            icon: "💡",
+            tag: "MENTORING & AUDIT",
+            title: "Tech Advice & Store Publishing",
+            desc: "1-on-1 technical consultations, app architecture review, Firebase setup, and step-by-step help publishing to Google Play & App Store.",
+            price: "From $25 / session"
+          }
+        ],
+
+        // История студии
+        storyTag: "// ORIGIN STORY",
+        storyTitle: "How NomaByte Studio Started",
+        storyText1: "NomaByte Studio was founded in Bratislava, Slovakia by Alexandr with a clear mission: turning real-world everyday problems into clean, fast, and accessible software.",
+        storyText2: "What began as late-night coding experiments and UI prototypes evolved into an independent development studio building mobile applications, educational platforms, and web ecosystems.",
+        milestones: [
+          { year: "2025", title: "The Spark & Architecture", desc: "Started designing cross-platform mobile architectures with Flutter, Dart, and Firebase, focusing on dark-mode UI and offline performance." },
+          { year: "Early 2026", title: "First Release: Vodičák SK", desc: "Launched our flagship driving school exam simulator on Google Play in April 2026, helping users in Slovakia prepare for theory exams." },
+          { year: "Late 2026", title: "Ecosystem & Global Clients", desc: "Launched nomabyte.com, opened our closed Tester Hub, started building SlovoGo (A1–C1 language app), and expanded to international freelance development." }
+        ],
+
+        // Кейс приложения Vodičák SK
+        appTag: "// FLAGSHIP PRODUCT",
+        appTitle: "Vodičák SK — Full Case Study",
+        appStory: "Living in Slovakia, we noticed that many foreign residents and students struggled to find a modern, fast, and clear simulator for Slovak driving school theory exams. We built Vodičák SK from scratch — combining the official question bank, smart mistake tracking, and a distraction-free interface.",
+        appFeatures: [
+          "Complete Slovak theoretical driving exam question database",
+          "Smart training modes, progress analytics & mistake review",
+          "Fast offline-ready Flutter engine with Firebase backend",
+          "Published and maintained on Google Play Store"
+        ],
+        btnGooglePlay: "View on Google Play ↗",
+        btnTestBeta: "Join Beta Tester Hub →",
+
+        // Форма заказа
+        orderTag: "// START A PROJECT",
+        orderTitle: "Order a Website, App or Consultation",
+        orderSub: "Tell us what you want to build or ask. We reply within a few hours.",
+        labelService: "WHAT DO YOU NEED?",
+        labelBudget: "ESTIMATED BUDGET",
+        labelName: "YOUR NAME",
+        labelContact: "EMAIL OR TELEGRAM (@username)",
+        labelDetails: "PROJECT DETAILS / YOUR QUESTION",
+        btnSubmit: "SEND REQUEST TO NOMABYTE →",
+        btnSending: "TRANSMITTING...",
+        successMsg: "✓ Request received! Alexandr & NomaByte Studio will contact you shortly."
+      },
+
+      SK: {
+        backHome: "Späť na úvod",
+        badge: "SLUŽBY • PROJEKTY • PRÍBEH ŠTÚDIA",
+        heroTitle1: "Vytvorme váš nový",
+        heroTitle2: "Digitálny Produkt",
+        heroSub: "Od mobilných aplikácií pre iOS a Android až po moderné weby, skripty na mieru a odborné IT poradenstvo.",
+        ctaOrder: "Objednať projekt ↓",
+        ctaStory: "Náš príbeh a aplikácie",
+
+        servicesTag: "// ČO VYRÁBAME",
+        servicesTitle: "Služby a riešenia",
+        servicesDesc: "Kliknite na službu nižšie pre automatické vyplnenie v objednávkovom formulári.",
+        services: [
+          {
+            id: "Mobile App (iOS & Android)",
+            icon: "📱",
+            tag: "FLUTTER & DART",
+            title: "Vývoj mobilných aplikácií",
+            desc: "Kompletné mobilné aplikácie pre Android a iOS s offline režimom, notifikáciami, Firebase a publikovaním do obchodov.",
+            price: "Od 150 €"
+          },
+          {
+            id: "Website / Web Platform",
+            icon: "🌐",
+            tag: "REACT & TAILWIND",
+            title: "Webové stránky a portály",
+            desc: "Rýchle prezentačné weby, portfóliá, interaktívne dashboardy a moderné webové aplikácie na mieru.",
+            price: "Od 80 €"
+          },
+          {
+            id: "Custom Software & Automation",
+            icon: "⚙️",
+            tag: "PYTHON & BOTY",
+            title: "Programy a automatizácia",
+            desc: "Telegram boty, spracovanie dát, automatizačné skripty a softvérové nástroje pre vaše podnikanie.",
+            price: "Od 60 €"
+          },
+          {
+            id: "IT Consultation & Store Launch",
+            icon: "💡",
+            tag: "PORADENSTVO & AUDIT",
+            title: "IT konzultácie a publikovanie",
+            desc: "Odborné rady, kontrola kódu a architektúry, nastavenie Firebase a pomoc s vydaním aplikácie v Google Play / App Store.",
+            price: "Od 25 € / konzultácia"
+          }
+        ],
+
+        storyTag: "// NÁŠ PRÍBEH",
+        storyTitle: "Ako vzniklo NomaByte Studio",
+        storyText1: "Štúdio NomaByte Studio založil Alexandr v Bratislave s jasným cieľom: premieňať reálne každodenné potreby ľudí na rýchle, prehľadné a užitočné aplikácie.",
+        storyText2: "To, čo začalo ako večerné programovanie a návrhy rozhraní, vyrástlo do nezávislého vývojárskeho štúdia s vlastnými aplikáciami na Google Play a klientmi.",
+        milestones: [
+          { year: "2025", title: "Začiatok a architektúra", desc: "Prvé projekty vo Flutteri a Firebase so zameraním na moderný tmavý dizajn a rýchlosť." },
+          { year: "Jar 2026", title: "Vydanie Vodičák SK", desc: "V apríli 2026 sme publikovali aplikáciu Vodičák SK na Google Play na prípravu na teoretické skúšky autoškoly." },
+          { year: "Jeseň 2026", title: "Ekosystém a vývoj na mieru", desc: "Spustenie portálu nomabyte.com, vlastného Tester Hubu, vývoj jazykovej aplikácie SlovoGo a tvorba projektov pre klientov." }
+        ],
+
+        appTag: "// HLAVNÝ PRODUKT",
+        appTitle: "Vodičák SK — Príbeh aplikácie",
+        appStory: "Všimli sme si, že mnohí študenti a cudzinci na Slovensku hľadajú moderný a prehľadný trenažér na skúšky z autoškoly. Vytvorili sme Vodičák SK od nuly — s databázou otázok, sledovaním chýb a čistým rozhraním.",
+        appFeatures: [
+          "Kompletná databáza otázok pre teoretické skúšky v SR",
+          "Inteligentné precvičovanie chýb a štatistiky úspešnosti",
+          "Rýchly Flutter engine s podporou Firebase",
+          "Oficiálne dostupné v obchode Google Play"
+        ],
+        btnGooglePlay: "Otvoriť v Google Play ↗",
+        btnTestBeta: "Vstúpiť do Tester Hubu →",
+
+        orderTag: "// OBJEDNÁVKA",
+        orderTitle: "Objednajte si web, aplikáciu alebo radu",
+        orderSub: "Napíšte nám svoju predstavu alebo otázku. Odpovieme vám do niekoľkých hodín.",
+        labelService: "ČO POTREBUJETE?",
+        labelBudget: "ORIENTAČNÝ ROZPOČET",
+        labelName: "VAŠE MENO",
+        labelContact: "E-MAIL ALEBO TELEGRAM (@meno)",
+        labelDetails: "POPIS PROJEKTU / VAŠA OTÁZKA",
+        btnSubmit: "ODOSLAŤ DOPYT DO NOMABYTE →",
+        btnSending: "ODOSIELA SA...",
+        successMsg: "✓ Dopyt bol úspešne odoslaný! Čoskoro sa vám ozveme."
+      },
+
+      RU: {
+        backHome: "На главную",
+        badge: "УСЛУГИ • КЕЙСЫ • ИСТОРИЯ СТУДИИ",
+        heroTitle1: "Создадим ваш новый",
+        heroTitle2: "Цифровой Продукт",
+        heroSub: "Разработка мобильных приложений для iOS и Android, современных сайтов, программ на заказ и IT-консультации.",
+        ctaOrder: "Заказать разработку ↓",
+        ctaStory: "История студии и приложения",
+
+        servicesTag: "// ЧТО МЫ ДЕЛАЕМ",
+        servicesTitle: "Услуги и решения",
+        servicesDesc: "Нажмите на нужную карточку ниже, чтобы сразу выбрать её в форме заказа.",
+        services: [
+          {
+            id: "Mobile App (iOS & Android)",
+            icon: "📱",
+            tag: "FLUTTER & DART",
+            title: "Мобильные приложения",
+            desc: "Разработка кроссплатформенных приложений под iOS и Android под ключ: от дизайна и офлайн-логики до публикации в Google Play и App Store.",
+            price: "От $150"
+          },
+          {
+            id: "Website / Web Platform",
+            icon: "🌐",
+            tag: "REACT & TAILWIND",
+            title: "Сайты и веб-платформы",
+            desc: "Быстрые лендинги, сайты-портфолио, личные кабинеты, админ-панели и современные веб-приложения с анимациями.",
+            price: "От $80"
+          },
+          {
+            id: "Custom Software & Automation",
+            icon: "⚙️",
+            tag: "PYTHON & BOTS",
+            title: "Программы и автоматизация",
+            desc: "Telegram-боты, парсеры, скрипты автоматизации рутинных задач и кастомные утилиты под Windows / macOS.",
+            price: "От $60"
+          },
+          {
+            id: "IT Consultation & Store Launch",
+            icon: "💡",
+            tag: "СОВЕТЫ И ЗАПУСК",
+            title: "Консультации и публикация",
+            desc: "Разбор вашей идеи, технические советы, настройка Firebase, помощь с регистрацией аккаунтов разработчика и выкладкой в сторы.",
+            price: "От $25 / разбор"
+          }
+        ],
+
+        storyTag: "// ИСТОРИЯ ОСНОВАНИЯ",
+        storyTitle: "Как появилась NomaByte Studio",
+        storyText1: "Студия NomaByte Studio была основана Александром в Братиславе (Словакия) с простой и честной идеей: превращать реальные повседневные задачи людей в удобные, быстрые и красивые приложения.",
+        storyText2: "То, что начиналось с ночных экспериментов с кодом и прототипами интерфейсов, выросло в независимую студию разработки со своими релизами в Google Play, собственной веб-платформой и закрытым клубом тестировщиков.",
+        milestones: [
+          { year: "2025", title: "Старт и первые прототипы", desc: "Начало работы с кроссплатформенным стеком Flutter, Dart и Firebase. Поиск фирменного стиля с акцентом на темную тему и скорость." },
+          { year: "Весна 2026", title: "Релиз Vodičák SK в Google Play", desc: "В апреле 2026 года вышел наш первый крупный публичный продукт — тренажер экзаменов ПДД Словакии Vodičák SK." },
+          { year: "Осень 2026", title: "Экосистема NomaByte и заказы", desc: "Запуск официального сайта nomabyte.com, портала тестеров, разработка платформы изучения словацкого языка SlovoGo и выход на коммерческую разработку." }
+        ],
+
+        appTag: "// НАШ ФЛАГМАН",
+        appTitle: "Vodičák SK — История создания",
+        appStory: "Живя в Словакии, мы заметили, что многим иностранцам и студентам автошкол не хватает современного, быстрого и понятного тренажера для подготовки к теоретическому экзамену на права. Мы создали Vodičák SK с нуля: собрали актуальную базу вопросов, сделали умную работу над ошибками и интуитивный интерфейс.",
+        appFeatures: [
+          "Полная актуальная база вопросов для экзаменов ПДД в Словакии",
+          "Умные режимы тренировки, статистика прогресса и разбор ошибок",
+          "Быстрый движок на Flutter с облачной синхронизацией Firebase",
+          "Официально опубликовано и поддерживается в Google Play"
+        ],
+        btnGooglePlay: "Открыть в Google Play ↗",
+        btnTestBeta: "Стать бета-тестером →",
+
+        orderTag: "// ОФОРМИТЬ ЗАКАЗ",
+        orderTitle: "Заказать сайт, приложение или консультацию",
+        orderSub: "Опишите вашу идею, задачу или вопрос. Мы изучим детали и ответим в течение нескольких часов.",
+        labelService: "ЧТО ВАМ НУЖНО?",
+        labelBudget: "ПРИМЕРНЫЙ БЮДЖЕТ",
+        labelName: "ВАШЕ ИМЯ",
+        labelContact: "EMAIL ИЛИ TELEGRAM (@username)",
+        labelDetails: "ОПИСАНИЕ ЗАДАЧИ / ВАШ ВОПРОС",
+        btnSubmit: "ОТПРАВИТЬ ЗАЯВКУ В NOMABYTE →",
+        btnSending: "ОТПРАВКА...",
+        successMsg: "✓ Заявка принята! Александр и команда NomaByte Studio скоро свяжутся с вами."
+      }
+    };
+
+    function ServicesApp() {
+      const [lang, setLang] = useState('RU');
+      const [selectedService, setSelectedService] = useState('Mobile App (iOS & Android)');
+      const [budget, setBudget] = useState('$100 – $300');
+      const [name, setName] = useState('');
+      const [contact, setContact] = useState('');
+      const [details, setDetails] = useState('');
+      const [loading, setLoading] = useState(false);
+      const [submitted, setSubmitted] = useState(false);
+
+      const t = content[lang];
+
+      const handleSelectServiceCard = (serviceId) => {
+        setSelectedService(serviceId);
+        const formEl = document.getElementById('order-form');
+        if (formEl) formEl.scrollIntoView({ behavior: 'smooth' });
+      };
+
+      const handleOrderSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+          const res = await fetch("https://formspree.io/f/mwlvypbn", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({
+              subject: `💼 НОВЫЙ ЗАКАЗ С САЙТА: ${selectedService}`,
+              service_type: selectedService,
+              estimated_budget: budget,
+              client_name: name,
+              client_contact: contact,
+              project_details: details
+            })
+          });
+          if (res.ok) {
+            setSubmitted(true);
+            setName('');
+            setContact('');
+            setDetails('');
+            setTimeout(() => setSubmitted(false), 6000);
+          }
+        } catch (err) {
+          alert("Connection error. Please message us on Telegram: @nomabytestudio");
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      return (
+        <div class="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900/70 via-[#050608] to-[#030406]">
+          
+          {/* Шапка */}
+          <header class="border-b border-slate-800/80 bg-[#050608]/85 backdrop-blur-xl sticky top-0 z-40">
+            <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+              <a href="index.html" class="flex items-center gap-2.5 font-mono-code text-xs md:text-sm text-slate-300 hover:text-cyan-400 transition-colors">
+                <span>&larr;</span>
+                <span>{t.backHome}</span>
+              </a>
+
+              <div class="flex items-center gap-3">
+                <select
+                  value={lang}
+                  onChange={(e) => setLang(e.target.value)}
+                  class="px-2.5 py-1 rounded-lg border border-slate-800 bg-slate-900 text-cyan-400 text-xs font-mono-code font-bold focus:outline-none cursor-pointer"
+                >
+                  <option value="RU">RU</option>
+                  <option value="EN">EN</option>
+                  <option value="SK">SK</option>
+                </select>
+
+                <a
+                  href="#order-form"
+                  class="px-3.5 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono-code text-xs font-bold transition-all"
+                >
+                  Order Now
+                </a>
+              </div>
+            </div>
+          </header>
+
+          <main class="max-w-6xl mx-auto px-6 py-14 space-y-24">
+
+            {/* 1. HERO БЛОК */}
+            <section class="text-center max-w-3xl mx-auto pt-4">
+              <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-cyan-500/30 bg-cyan-950/40 text-cyan-400 text-xs font-mono-code mb-6">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                {t.badge}
+              </div>
+              <h1 class="text-4xl md:text-7xl font-black tracking-tight text-white mb-6 leading-tight">
+                {t.heroTitle1} <br />
+                <span class="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">{t.heroTitle2}</span>
+              </h1>
+              <p class="text-slate-400 text-sm md:text-base leading-relaxed mb-8">
+                {t.heroSub}
+              </p>
+              <div class="flex items-center justify-center gap-4 flex-wrap">
+                <a href="#order-form" class="px-7 py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition-all shadow-lg shadow-cyan-500/25">
+                  {t.ctaOrder}
+                </a>
+                <a href="#our-story" class="px-7 py-3.5 rounded-xl glass-card hover:border-cyan-500/40 text-slate-200 font-bold text-sm transition-all">
+                  {t.ctaStory}
+                </a>
+              </div>
+            </section>
+
+            {/* 2. КАРТОЧКИ УСЛУГ */}
+            <section id="services">
+              <div class="text-center mb-12">
+                <div class="font-mono-code text-xs text-cyan-400 tracking-widest uppercase mb-2">{t.servicesTag}</div>
+                <h2 class="text-3xl md:text-5xl font-extrabold text-white mb-2">{t.servicesTitle}</h2>
+                <p class="text-xs font-mono-code text-slate-400">{t.servicesDesc}</p>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {t.services.map((srv) => (
+                  <div
+                    key={srv.id}
+                    onClick={() => handleSelectServiceCard(srv.id)}
+                    class="glass-card rounded-3xl p-7 cursor-pointer hover:border-cyan-400/60 transition-all group flex flex-col justify-between space-y-6"
+                  >
+                    <div>
+                      <div class="flex items-center justify-between mb-4">
+                        <span class="text-3xl">{srv.icon}</span>
+                        <span class="px-3 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-mono-code text-[11px] font-bold">
+                          {srv.tag}
+                        </span>
+                      </div>
+                      <h3 class="text-xl font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors">{srv.title}</h3>
+                      <p class="text-sm text-slate-400 leading-relaxed">{srv.desc}</p>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between font-mono-code text-xs">
+                      <span class="text-emerald-400 font-bold">{srv.price}</span>
+                      <span class="text-cyan-400 group-hover:translate-x-1 transition-transform">Select & Order →</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* 3. КЕЙС ПРИЛОЖЕНИЯ VODIČÁK SK (ИСТОРИЯ, ФОТО-ПРЕВЬЮ И ССЫЛКА) */}
+            <section class="glass-card rounded-3xl p-7 md:p-10 glow-box border-blue-500/30">
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                
+                {/* Левая колонка: Описание и ссылка */}
+                <div class="lg:col-span-7 space-y-5">
+                  <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono-code text-xs">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                    PUBLISHED ON GOOGLE PLAY
+                  </div>
+                  <div class="font-mono-code text-xs text-blue-400">{t.appTag}</div>
+                  <h2 class="text-3xl md:text-4xl font-black text-white">{t.appTitle}</h2>
+                  <p class="text-slate-300 text-sm leading-relaxed">
+                    {t.appStory}
+                  </p>
+
+                  <ul class="space-y-2.5 pt-2">
+                    {t.appFeatures.map((feat, i) => (
+                      <li key={i} class="flex items-start gap-2.5 text-xs md:text-sm text-slate-300">
+                        <span class="text-cyan-400 font-bold mt-0.5">✓</span>
+                        <span>{feat}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div class="pt-4 flex flex-wrap items-center gap-4">
+                    <a
+                      href="https://play.google.com/store/search?q=Vodi%C4%8D%C3%A1k%20SK&c=apps"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs font-mono-code transition-all shadow-lg shadow-blue-600/25"
+                    >
+                      {t.btnGooglePlay}
+                    </a>
+                    <a
+                      href="dashboard.html"
+                      class="px-5 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-cyan-300 font-bold text-xs font-mono-code transition-all"
+                    >
+                      {t.btnTestBeta}
+                    </a>
+                  </div>
+                </div>
+
+                {/* Правая колонка: Визуальные скриншоты интерфейса приложения */}
+                <div class="lg:col-span-5 flex justify-center gap-4">
+                  {/* Экран 1: Главный экран тренажера */}
+                  <div class="w-44 h-80 rounded-3xl bg-slate-950 border-2 border-slate-700 p-2.5 shadow-2xl flex flex-col justify-between -rotate-2">
+                    <div class="bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl p-3 text-white">
+                      <div class="text-[9px] font-mono-code opacity-80">NOMABYTE STUDIO</div>
+                      <div class="font-bold text-xs mt-0.5">Vodičák SK</div>
+                      <div class="mt-2 bg-black/25 rounded-lg px-2 py-1 text-[9px] font-mono-code">Readiness: 94%</div>
+                    </div>
+                    <div class="space-y-2 my-auto py-2">
+                      <div class="p-2 rounded-xl bg-slate-900 border border-slate-800 text-[10px]">
+                        <div class="text-cyan-400 font-bold">📝 Skúšobný test</div>
+                        <div class="text-slate-500 text-[9px]">20 otázok • 20 min</div>
+                      </div>
+                      <div class="p-2 rounded-xl bg-slate-900 border border-slate-800 text-[10px]">
+                        <div class="text-amber-400 font-bold">⚠️ Dopravné značky</div>
+                        <div class="text-slate-500 text-[9px]">Kompletný prehľad</div>
+                      </div>
+                      <div class="p-2 rounded-xl bg-slate-900 border border-slate-800 text-[10px]">
+                        <div class="text-emerald-400 font-bold">📊 Moje chyby</div>
+                        <div class="text-slate-500 text-[9px]">Opakovanie otázok</div>
+                      </div>
+                    </div>
+                    <div class="text-center text-[8px] font-mono-code text-slate-600">UI SCREENSHOT #1</div>
+                  </div>
+
+                  {/* Экран 2: Режим экзамена */}
+                  <div class="w-44 h-80 rounded-3xl bg-slate-950 border-2 border-cyan-500/40 p-2.5 shadow-2xl flex flex-col justify-between translate-y-4 rotate-2">
+                    <div class="flex items-center justify-between px-1 pt-1">
+                      <span class="text-[9px] font-mono-code text-cyan-400">OTÁZKA 14/20</span>
+                      <span class="text-[9px] font-mono-code text-emerald-400">12:45</span>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-[10px] text-slate-200 leading-snug">
+                      Kto má prednosť v jazde na križovatke nerozlíšenej dopravnými značkami?
+                    </div>
+                    <div class="space-y-1.5 text-[9px]">
+                      <div class="p-2 rounded-lg bg-emerald-950/70 border border-emerald-500 text-emerald-300 font-semibold">
+                        ✓ Vozidlo prichádzajúce sprava
+                      </div>
+                      <div class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400">
+                        Vozidlo idúce rovno
+                      </div>
+                    </div>
+                    <div class="text-center text-[8px] font-mono-code text-slate-600">UI SCREENSHOT #2</div>
+                  </div>
+                </div>
+
+              </div>
+            </section>
+
+            {/* 4. ИСТОРИЯ ОСНОВАНИЯ СТУДИИ (TIMELINE) */}
+            <section id="our-story" class="space-y-10">
+              <div class="max-w-3xl">
+                <div class="font-mono-code text-xs text-cyan-400 tracking-widest uppercase mb-2">{t.storyTag}</div>
+                <h2 class="text-3xl md:text-5xl font-extrabold text-white mb-4">{t.storyTitle}</h2>
+                <p class="text-slate-300 text-sm md:text-base leading-relaxed mb-3">{t.storyText1}</p>
+                <p class="text-slate-400 text-sm leading-relaxed">{t.storyText2}</p>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {t.milestones.map((m, idx) => (
+                  <div key={idx} class="glass-card rounded-3xl p-6 border-t-2 border-t-cyan-400 space-y-3">
+                    <span class="inline-block px-3 py-1 rounded-lg bg-cyan-500/10 text-cyan-400 font-mono-code text-xs font-bold">
+                      {m.year}
+                    </span>
+                    <h3 class="text-lg font-bold text-white">{m.title}</h3>
+                    <p class="text-xs md:text-sm text-slate-400 leading-relaxed">{m.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* 5. ФОРМА ЗАКАЗА УСЛУГ / КОНСУЛЬТАЦИИ */}
+            <section id="order-form" class="max-w-3xl mx-auto pt-6">
+              <div class="glass-card rounded-3xl p-7 md:p-10 border-cyan-500/30 shadow-2xl">
+                <div class="text-center mb-8">
+                  <div class="font-mono-code text-xs text-cyan-400 tracking-widest uppercase mb-2">{t.orderTag}</div>
+                  <h2 class="text-2xl md:text-4xl font-black text-white mb-2">{t.orderTitle}</h2>
+                  <p class="text-xs md:text-sm text-slate-400">{t.orderSub}</p>
+                </div>
+
+                <form onSubmit={handleOrderSubmit} class="space-y-5">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                      <label class="block font-mono-code text-xs text-slate-400 mb-2">{t.labelService}</label>
+                      <select
+                        value={selectedService}
+                        onChange={(e) => setSelectedService(e.target.value)}
+                        class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-cyan-300 font-semibold text-sm focus:outline-none focus:border-cyan-400"
+                      >
+                        <option value="Mobile App (iOS & Android)">📱 Mobile App (iOS & Android)</option>
+                        <option value="Website / Web Platform">🌐 Website / Web Platform</option>
+                        <option value="Custom Software & Automation">⚙️ Custom Software / Bot / Script</option>
+                        <option value="IT Consultation & Store Launch">💡 IT Consultation / Advice</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label class="block font-mono-code text-xs text-slate-400 mb-2">{t.labelBudget}</label>
+                      <select
+                        value={budget}
+                        onChange={(e) => setBudget(e.target.value)}
+                        class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-sm focus:outline-none focus:border-cyan-400"
+                      >
+                        <option value="$25 – $60 (Consultation / Small Task)">$25 – $60 (Consultation / Small Task)</option>
+                        <option value="$100 – $300 (Website / MVP)">$100 – $300 (Website / MVP)</option>
+                        <option value="$300 – $800 (Full Mobile App)">$300 – $800 (Full Mobile App)</option>
+                        <option value="$800+ (Complex Platform)">$800+ (Complex Platform)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                      <label class="block font-mono-code text-xs text-slate-400 mb-2">{t.labelName}</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Alexandr"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-sm focus:outline-none focus:border-cyan-400"
+                      />
+                    </div>
+                    <div>
+                      <label class="block font-mono-code text-xs text-slate-400 mb-2">{t.labelContact}</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="name@email.com or @telegram"
+                        value={contact}
+                        onChange={(e) => setContact(e.target.value)}
+                        class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-sm focus:outline-none focus:border-cyan-400"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block font-mono-code text-xs text-slate-400 mb-2">{t.labelDetails}</label>
+                    <textarea
+                      rows="4"
+                      required
+                      placeholder="Describe your idea, features, deadlines, or question..."
+                      value={details}
+                      onChange={(e) => setDetails(e.target.value)}
+                      class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-sm focus:outline-none focus:border-cyan-400 resize-none"
+                    ></textarea>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    class="w-full py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-slate-950 font-bold text-sm font-mono-code transition-all shadow-lg shadow-cyan-500/20 disabled:opacity-50"
+                  >
+                    {loading ? t.btnSending : t.btnSubmit}
+                  </button>
+
+                  {submitted && (
+                    <div class="p-4 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-emerald-300 text-xs font-mono-code text-center">
+                      {t.successMsg}
+                    </div>
+                  )}
+                </form>
+              </div>
+            </section>
+
+          </main>
+
+          {/* Футер */}
+          <footer class="border-t border-slate-800/80 py-8 bg-[#030406] mt-16">
+            <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 font-mono-code text-xs text-slate-500">
+              <div>© 2026 NomaByte Studio • Bratislava, SK</div>
+              <div class="flex items-center gap-6 flex-wrap justify-center">
+                <a href="index.html" class="hover:text-cyan-400 transition-colors">Home</a>
+                <a href="Privacypolicy.html" class="hover:text-cyan-400 transition-colors">Privacy & Rules</a>
+                <a href="dashboard.html" class="hover:text-amber-400 transition-colors">Tester Hub</a>
+                <a href="contact.html" class="hover:text-cyan-400 transition-colors">Contact</a>
+              </div>
+            </div>
+          </footer>
+
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('services-root')).render(<ServicesApp />);
+  </script>
+</body>
+</html>
